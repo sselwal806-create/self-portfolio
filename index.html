@@ -3,163 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple-Style Smooth Portfolio</title>
+    <title>Hsu YU CHIEN - Portfolio</title>
     <style>
-        /* 基礎設定 */
+        /* 基礎設定與字體 */
         body {
             margin: 0;
-            background-color: #000;
+            background-color: #050505; /* 極致黑底 */
             color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
-            align-items: center;
+            flex-direction: column; /* 改為直向排列以容納標題 */
+            justify-content: center;
             height: 100vh;
             overflow: hidden;
+        }
+
+        /* --- 需求 1：大標題區塊 --- */
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .hero h2 {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #888;
+            letter-spacing: 8px;
+            margin-top: 10px;
+            text-transform: uppercase;
         }
 
         /* 橫向滑動軌道 */
         .slider {
             display: flex;
             gap: 40px;
-            padding: 0 50px;
+            padding: 20px 5vw; /* 讓左右有呼吸空間 */
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             width: 100%;
-            height: 600px;
-            align-items: center;
-            /* 隱藏滾動條 */
+            box-sizing: border-box;
             scrollbar-width: none; 
         }
-        .slider::-webkit-scrollbar {
-            display: none;
+        .slider::-webkit-scrollbar { display: none; }
+
+        /* 卡片容器：加入超連結標籤的樣式清除 */
+        .card-link {
+            text-decoration: none; /* 移除超連結底線 */
+            color: inherit;
+            flex: 0 0 320px;
+            scroll-snap-align: center;
+            display: block;
         }
 
-        /* 卡片容器 */
         .card {
-            flex: 0 0 350px;
-            height: 500px;
-            border-radius: 24px;
+            width: 100%;
+            height: 480px;
+            border-radius: 20px;
             overflow: hidden;
             position: relative;
-            scroll-snap-align: center;
-            
-            /* --- 蘋果絲滑感核心 1：進場動畫 --- */
             opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            /* 使用阻尼感極強的貝茲曲線，創造穩重感 */
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(40px) scale(0.95);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 當 JS 偵測到卡片進入畫面時，加上 .show 類別 */
         .card.show {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
 
-        /* 圖片/影片初始狀態 */
+        /* 圖片初始狀態：模糊 + 放大 */
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            
-            filter: blur(20px) brightness(0.6);
+            filter: blur(20px) brightness(0.5);
             transform: scale(1.15);
-            
-            /* --- 蘋果絲滑感核心 2：懸停動畫 --- */
-            /* 0.8秒的絲滑過渡，沒有生硬的開始與結束 */
             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
                         filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            
-            /* 呼叫 GPU 硬體加速，防止動畫掉幀卡頓 */
             will-change: transform, filter;
         }
 
-        /* 懸停狀態 (Hover) */
-        .card:hover img {
-            filter: blur(0) brightness(1);
+        .card-link:hover img {
+            filter: blur(0) brightness(0.9);
             transform: scale(1);
         }
 
-        /* 卡片文字 */
+        /* --- 需求 2：文字順序上移的動畫核心 --- */
         .card-content {
             position: absolute;
             bottom: 30px;
             left: 30px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            right: 30px;
         }
 
-        .card:hover .card-content {
+        /* 將標題、副標、按鈕的初始狀態都設為：透明且往下掉 20px */
+        .card-content h3, 
+        .card-content p, 
+        .card-content .btn {
+            margin: 0;
+            opacity: 0;
+            transform: translateY(20px);
+            /* 預設退場速度 */
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+
+        .card-content h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+        .card-content p { font-size: 1rem; color: #ccc; margin-bottom: 15px; }
+        .card-content .btn { 
+            display: inline-block; 
+            font-size: 0.85rem; 
+            border: 1px solid rgba(255,255,255,0.5); 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+        }
+
+        /* 懸停時的狀態：透明度變 1，回到原位 */
+        .card-link:hover .card-content h3,
+        .card-link:hover .card-content p,
+        .card-link:hover .card-content .btn {
             opacity: 1;
             transform: translateY(0);
         }
 
-        h3 { margin: 0 0 8px 0; font-size: 1.5rem; font-weight: 600; }
-        p { margin: 0; font-size: 0.95rem; color: #a1a1a6; }
+        /* 關鍵：利用 transition-delay 設定「排隊進場」的時間差 */
+        .card-link:hover .card-content h3 { transition-delay: 0.1s; } /* 最先出來 */
+        .card-link:hover .card-content p  { transition-delay: 0.2s; } /* 慢 0.1 秒出來 */
+        .card-link:hover .card-content .btn { transition-delay: 0.3s; } /* 最後出來 */
+
+        /* 大標題進場關鍵影格 */
+        @keyframes fadeInDown {
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
+    <div class="hero">
+        <h1>Hsu YU CHIEN</h1>
+        <h2>Portfolio</h2>
+    </div>
+
     <div class="slider">
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=1" alt="Project 1">
-            <div class="card-content">
-                <h3>Project Alpha</h3>
-                <p>Digital Experience</p>
+        <a href="project1.html" class="card-link">
+            <div class="card">
+                <img src="https://picsum.photos/800/1000?random=1" alt="作品封面">
+                <div class="card-content">
+                    <h3>品牌識別設計</h3>
+                    <p>Visual Identity & Branding</p>
+                    <span class="btn">View Project</span>
+                </div>
             </div>
-        </div>
+        </a>
 
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=2" alt="Project 2">
-            <div class="card-content">
-                <h3>Project Beta</h3>
-                <p>Visual Design</p>
+        <a href="project2.html" class="card-link">
+            <div class="card">
+                <img src="https://picsum.photos/800/1000?random=2" alt="作品封面">
+                <div class="card-content">
+                    <h3>互動式網頁</h3>
+                    <p>Web Development</p>
+                    <span class="btn">View Project</span>
+                </div>
             </div>
-        </div>
-
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=3" alt="Project 3">
-            <div class="card-content">
-                <h3>Project Gamma</h3>
-                <p>Web Development</p>
-            </div>
-        </div>
-        
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=4" alt="Project 4">
-            <div class="card-content">
-                <h3>Project Delta</h3>
-                <p>Motion Graphics</p>
-            </div>
-        </div>
+        </a>
     </div>
 
     <script>
-        // 設定監聽器：當元素進入畫面 15% 的時候觸發
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15 
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
+        const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
-                // 如果卡片進入畫面
                 if (entry.isIntersecting) {
-                    // 加上 'show' 這個 class 來啟動 CSS 動畫
                     entry.target.classList.add('show');
-                    // 動畫播完就停止監聽，節省效能
-                    observer.unobserve(entry.target);
+                    obs.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.15 });
 
-        // 把所有的 .card 都交給監聽器看管
-        document.querySelectorAll('.card').forEach(card => {
-            observer.observe(card);
-        });
+        document.querySelectorAll('.card').forEach(card => observer.observe(card));
     </script>
 </body>
 </html>
