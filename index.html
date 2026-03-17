@@ -15,23 +15,21 @@
             flex-direction: column;
         }
 
-        /* 灰色大字標題 */
+        /* --- 標題與轉盤區 (維持你最愛的原樣) --- */
         .hero {
             text-align: center;
             margin-top: 8vh;
-            z-index: 200; 
+            z-index: 50; 
             pointer-events: none; 
         }
-
         .hero h1 {
             font-size: 4.5rem;
             font-weight: 800;
-            color: #b0b0b0; /* 灰色大字 */
+            color: #b0b0b0; 
             margin: 0;
             letter-spacing: 5px;
             text-transform: uppercase;
         }
-
         .hero h2 {
             font-size: 1.2rem;
             font-weight: 400;
@@ -41,7 +39,6 @@
             text-transform: uppercase;
         }
 
-        /* 轉盤容器 */
         .wheel-container {
             position: relative;
             flex-grow: 1;
@@ -50,56 +47,163 @@
             align-items: center;
         }
 
-        /* 正方形圖片卡片 */
         .card {
             position: absolute;
-            width: 380px;  /* 正方形 */
+            width: 380px;  
             height: 380px; 
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             cursor: pointer;
-            /* 變快了！動畫縮短為 0.4 秒 */
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 圖片模糊設定 */
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* 預設：模糊且變暗 */
             filter: blur(15px) brightness(0.4);
             transform: scale(1.15);
             transition: all 0.5s ease;
         }
 
-        /* 只有帶有 .active 的卡片（正中央那張），圖片才會變清晰 */
         .card.active img {
             filter: blur(0) brightness(1);
             transform: scale(1);
         }
 
-        /* 懸停時微微放大，增加互動感 */
         .card.active:hover img {
             transform: scale(1.05);
         }
 
-        /* 縮小後的數字，永遠保持清晰 */
         .card-number {
             position: absolute;
             top: 20px;
             left: 25px;
-            font-size: 1.8rem; /* 字體變小，更精緻 */
+            font-size: 1.8rem; 
             font-weight: 700;
             color: rgba(255, 255, 255, 0.9);
             margin: 0;
             z-index: 10;
             text-shadow: 1px 2px 10px rgba(0,0,0,0.8);
         }
+
+        /* =========================================
+           新增區塊：漢堡按鈕與全螢幕選單 
+           ========================================= */
+        
+        /* 1. 漢堡按鈕 (右上角) */
+        .menu-toggle {
+            position: fixed;
+            top: 40px;
+            right: 50px;
+            width: 40px;
+            height: 30px;
+            z-index: 999; /* 確保永遠在最上層 */
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 漢堡按鈕的「三條線」 */
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 3px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: right center; /* 設定旋轉中心點 */
+        }
+
+        /* 漢堡按鈕變成「X」的動畫 */
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) scaleX(1.1);
+        }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0; /* 中間那條線消失 */
+        }
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) scaleX(1.1);
+        }
+
+        /* 2. 全螢幕選單背景 */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px); /* 背景毛玻璃效果 */
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 預設隱藏 */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        /* 當選單被打開時 */
+        .menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 3. 選單文字排版 */
+        .menu-links {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        .menu-links li {
+            margin: 30px 0;
+            overflow: hidden; /* 為了讓文字有「從下往上浮現」的遮罩效果 */
+        }
+
+        .menu-links a {
+            display: inline-block;
+            text-decoration: none;
+            color: #555;
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            /* 預設文字往下沉 */
+            transform: translateY(100%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+        }
+
+        /* 選單打開時，文字依序浮現 (加上延遲) */
+        .menu-overlay.active .menu-links li:nth-child(1) a { transform: translateY(0); transition-delay: 0.1s; }
+        .menu-overlay.active .menu-links li:nth-child(2) a { transform: translateY(0); transition-delay: 0.2s; }
+        .menu-overlay.active .menu-links li:nth-child(3) a { transform: translateY(0); transition-delay: 0.3s; }
+        .menu-overlay.active .menu-links li:nth-child(4) a { transform: translateY(0); transition-delay: 0.4s; }
+
+        /* 滑鼠移上去時變白色 */
+        .menu-links a:hover {
+            color: #fff;
+        }
     </style>
 </head>
 <body>
+
+    <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <ul class="menu-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="project1.html">Works</a></li> <li><a href="about.html">About</a></li>   <li><a href="mailto:your-email@example.com">Contact</a></li>
+        </ul>
+    </div>
 
     <div class="hero">
         <h1>Hsu YU CHIEN</h1>
@@ -126,6 +230,17 @@
     </div>
 
     <script>
+        // --- 選單控制 JS ---
+        const menuToggle = document.getElementById('menuToggle');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        menuToggle.addEventListener('click', () => {
+            // 切換 active 類別，來觸發 CSS 的動畫
+            menuToggle.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+        });
+
+        // --- 轉盤控制 JS (維持原樣) ---
         const cards = document.querySelectorAll('.card');
         const totalCards = cards.length;
         let activeIndex = 0; 
@@ -133,7 +248,6 @@
 
         function updateWheel() {
             cards.forEach((card, index) => {
-                // 迴圈數學：計算每張卡片距離中心的「最短路徑」
                 let diff = index - activeIndex;
 
                 if (diff > Math.floor(totalCards / 2)) {
@@ -142,7 +256,6 @@
                     diff += totalCards;
                 }
 
-                // 物理位置計算
                 let translateX = diff * 240; 
                 let translateY = Math.abs(diff) * 40; 
                 let rotateZ = diff * 8; 
@@ -151,20 +264,17 @@
                 card.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotateZ}deg) scale(${scale})`;
                 card.style.zIndex = 100 - Math.abs(diff);
 
-                // 控制中心卡片的清晰與模糊
                 if (diff === 0) {
-                    card.classList.add('active'); // 在中間：掛上 active 讓 CSS 變清晰
+                    card.classList.add('active'); 
                     card.style.opacity = 1;
                     card.style.pointerEvents = 'auto';
                 } else {
-                    card.classList.remove('active'); // 不在中間：拔掉 active 恢復模糊
-                    
-                    // 藏起背後的卡片，避免迴圈時穿幫
+                    card.classList.remove('active'); 
                     if (Math.abs(diff) > 1) {
                         card.style.opacity = 0;
                         card.style.pointerEvents = 'none';
                     } else {
-                        card.style.opacity = 0.6; // 左右兩邊的卡片稍微變透明
+                        card.style.opacity = 0.6; 
                         card.style.pointerEvents = 'none';
                     }
                 }
@@ -174,23 +284,18 @@
         updateWheel();
 
         window.addEventListener('wheel', (e) => {
-            if (isScrolling) return;
+            // 如果選單是打開的狀態，就鎖定轉盤不要轉
+            if (isScrolling || menuOverlay.classList.contains('active')) return;
 
             if (e.deltaY > 0) {
-                // 往下滑：往下一張，並利用 % 達成無限迴圈
                 activeIndex = (activeIndex + 1) % totalCards;
             } else {
-                // 往上滑：往上一張，無限迴圈
                 activeIndex = (activeIndex - 1 + totalCards) % totalCards;
             }
 
             updateWheel();
-
-            // 煞車時間減半，現在只要 300 毫秒就能滑下一張
             isScrolling = true;
-            setTimeout(() => {
-                isScrolling = false;
-            }, 300); 
+            setTimeout(() => { isScrolling = false; }, 300); 
         });
     </script>
 </body>
