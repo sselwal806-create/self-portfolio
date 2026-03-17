@@ -1,165 +1,133 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple-Style Smooth Portfolio</title>
     <style>
-        /* 基礎設定 */
-        body {
-            margin: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+        body { margin: 0; display: flex; justify-content: center; background: #fff; font-family: -apple-system, sans-serif; }
+        .slider-container { position: relative; width: 100vw; max-width: 800px; overflow: hidden; }
+        
+        /* 投影片主體 */
+        .slides { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); align-items: center; } /* align-items 確保高度不一時垂直置中 */
+        .slide { min-width: 100%; box-sizing: border-box; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        
+        /* 圖片優化：自動縮小以完整顯示 */
+        img { 
+            width: 100%; 
+            height: 450px; /* 固定高度容器 */
+            border-radius: 12px; 
+            object-fit: contain; /* 關鍵：確保圖片完整顯示，不裁切，自動縮放 */
+            background: #f9f9f9; /* 給不同比例圖片一個淡色底色 */
         }
+        
+        /* 文字樣式 */
+        .content { padding: 15px; min-height: 120px; } /* 固定文字高度避免切換時跳動 */
+        h2 { margin: 10px 0 5px; color: #37352f; font-size: 1.5rem; }
+        h3 { margin: 5px 0; color: #555; font-size: 1.1rem; font-weight: normal; }
+        p { color: #888; font-size: 0.9rem; }
 
-        /* 橫向滑動軌道 */
-        .slider {
-            display: flex;
-            gap: 40px;
-            padding: 0 50px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            width: 100%;
-            height: 600px;
-            align-items: center;
-            /* 隱藏滾動條 */
-            scrollbar-width: none; 
-        }
-        .slider::-webkit-scrollbar {
-            display: none;
-        }
+        /* 左右按鈕 */
+        .btn { position: absolute; top: 40%; transform: translateY(-50%); background: rgba(255,255,255,0.7); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; z-index: 10; transition: 0.3s; }
+        .btn:hover { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .prev { left: 10px; }
+        .next { right: 10px; }
 
-        /* 卡片容器 */
-        .card {
-            flex: 0 0 350px;
-            height: 500px;
-            border-radius: 24px;
-            overflow: hidden;
-            position: relative;
-            scroll-snap-align: center;
-            
-            /* --- 蘋果絲滑感核心 1：進場動畫 --- */
-            opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            /* 使用阻尼感極強的貝茲曲線，創造穩重感 */
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* 當 JS 偵測到卡片進入畫面時，加上 .show 類別 */
-        .card.show {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* 圖片/影片初始狀態 */
-        .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            
-            filter: blur(20px) brightness(0.6);
-            transform: scale(1.15);
-            
-            /* --- 蘋果絲滑感核心 2：懸停動畫 --- */
-            /* 0.8秒的絲滑過渡，沒有生硬的開始與結束 */
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-                        filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            
-            /* 呼叫 GPU 硬體加速，防止動畫掉幀卡頓 */
-            will-change: transform, filter;
-        }
-
-        /* 懸停狀態 (Hover) */
-        .card:hover img {
-            filter: blur(0) brightness(1);
-            transform: scale(1);
-        }
-
-        /* 卡片文字 */
-        .card-content {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .card:hover .card-content {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        h3 { margin: 0 0 8px 0; font-size: 1.5rem; font-weight: 600; }
-        p { margin: 0; font-size: 0.95rem; color: #a1a1a6; }
+        /* 圓點進度顯示 */
+        .dot-container { text-align: center; padding: 0 0 20px; }
+        .dot { cursor: pointer; height: 8px; width: 8px; margin: 0 5px; background-color: #bbb; border-radius: 50%; display: inline-block; transition: 0.3s; border: none; padding: 0; }
+        .active, .dot:hover { background-color: #333; width: 20px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="slider">
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=1" alt="Project 1">
-            <div class="card-content">
-                <h3>Project Alpha</h3>
-                <p>Digital Experience</p>
-            </div>
-        </div>
+<div class="slider-container" onmouseover="pauseAuto()" onmouseout="startAuto()">
+    <button class="btn prev" onclick="moveSlide(-1)">❮</button>
+    <button class="btn next" onclick="moveSlide(1)">❯</button>
 
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=2" alt="Project 2">
-            <div class="card-content">
-                <h3>Project Beta</h3>
-                <p>Visual Design</p>
+    <div class="slides" id="slideWrapper">
+        <div class="slide">
+            <img src="烏紗電影院do not use 繪師_支江.jpeg">
+            <div class="content">
+                <h2>放映中</h2>
+                <h3>不知道今天選的片合不合烏羽先生口味呢?</h3>
+                <p>繪:支江</p>
             </div>
         </div>
-
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=3" alt="Project 3">
-            <div class="card-content">
-                <h3>Project Gamma</h3>
-                <p>Web Development</p>
+        <div class="slide">
+            <img src="IMG_7974.jpeg">
+            <div class="content">
+                <h2>早晨</h2>
+                <h3>Oo一大早乒乒乓乓以為是蓋伊又欠一筆錢oO</h3>
+                <p>繪:喵喵子Aulauly</p>
             </div>
         </div>
-        
-        <div class="card">
-            <img src="https://picsum.photos/800/1000?random=4" alt="Project 4">
-            <div class="card-content">
-                <h3>Project Delta</h3>
-                <p>Motion Graphics</p>
+        <div class="slide">
+            <img src="IMG_7622.jpeg">
+            <div class="content">
+                <h2>一口酥</h2>
+                <h3>烏羽先生如果變成小的可愛的尺寸的話</h3>
+                <p>繪：雞腿</p>
             </div>
         </div>
     </div>
 
-    <script>
-        // 設定監聽器：當元素進入畫面 15% 的時候觸發
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15 
-        };
+    <div class="dot-container" id="dotContainer"></div>
+</div>
 
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                // 如果卡片進入畫面
-                if (entry.isIntersecting) {
-                    // 加上 'show' 這個 class 來啟動 CSS 動畫
-                    entry.target.classList.add('show');
-                    // 動畫播完就停止監聽，節省效能
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
+<script>
+    let currentIdx = 0;
+    let autoPlayTimer;
+    const wrapper = document.getElementById('slideWrapper');
+    const slides = document.querySelectorAll('.slide');
+    const dotContainer = document.getElementById('dotContainer');
 
-        // 把所有的 .card 都交給監聽器看管
-        document.querySelectorAll('.card').forEach(card => {
-            observer.observe(card);
+    // 自動生成圓點
+    slides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.classList.add('dot');
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => { jumpToSlide(i); resetTimer(); };
+        dotContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.dot');
+
+    function updateUI() {
+        wrapper.style.transform = `translateX(-${currentIdx * 100}%)`;
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIdx);
         });
-    </script>
+    }
+
+    function moveSlide(step) {
+        currentIdx = (currentIdx + step + slides.length) % slides.length;
+        updateUI();
+    }
+
+    function jumpToSlide(index) {
+        currentIdx = index;
+        updateUI();
+    }
+
+    // --- 自動播放邏輯 ---
+    function startAuto() {
+        autoPlayTimer = setInterval(() => {
+            moveSlide(1);
+        }, 5000); // 5000 毫秒 = 5 秒換一張
+    }
+
+    function pauseAuto() {
+        clearInterval(autoPlayTimer);
+    }
+
+    function resetTimer() {
+        pauseAuto();
+        startAuto();
+    }
+
+    // 初始化自動播放
+    startAuto();
+</script>
+
 </body>
-</html>
+</html
