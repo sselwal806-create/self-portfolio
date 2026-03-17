@@ -5,29 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hsu YU CHIEN - Portfolio</title>
     <style>
-        /* 基礎設定 */
         body {
             margin: 0;
             background-color: #0f0f0f;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow: hidden; /* 隱藏系統預設的上下滾動條 */
+            overflow: hidden; 
             height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* --- 需求 3：灰色的大字標題 --- */
+        /* 灰色大字標題 */
         .hero {
             text-align: center;
-            margin-top: 6vh;
-            z-index: 200; /* 確保標題永遠在最上層 */
-            pointer-events: none; /* 讓滑鼠點擊可以穿透標題點到卡片 */
+            margin-top: 8vh;
+            z-index: 200; 
+            pointer-events: none; 
         }
 
         .hero h1 {
             font-size: 4.5rem;
             font-weight: 800;
-            color: #b0b0b0; /* 質感淺灰色 */
+            color: #b0b0b0; /* 灰色大字 */
             margin: 0;
             letter-spacing: 5px;
             text-transform: uppercase;
@@ -36,13 +35,13 @@
         .hero h2 {
             font-size: 1.2rem;
             font-weight: 400;
-            color: #666; /* 深灰色副標 */
+            color: #555; 
             letter-spacing: 10px;
             margin-top: 5px;
             text-transform: uppercase;
         }
 
-        /* --- 需求 2：重疊轉盤容器 --- */
+        /* 轉盤容器 */
         .wheel-container {
             position: relative;
             flex-grow: 1;
@@ -51,42 +50,52 @@
             align-items: center;
         }
 
-        /* --- 需求 1：正方形圖片卡片 --- */
+        /* 正方形圖片卡片 */
         .card {
             position: absolute;
-            width: 400px;
-            height: 400px; /* 長寬一致，確保是正方形 */
+            width: 380px;  /* 正方形 */
+            height: 380px; 
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             cursor: pointer;
-            /* 轉盤切換時的順滑動畫 */
-            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            /* 變快了！動畫縮短為 0.4 秒 */
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 圖片設定：移除模糊，保持清晰 */
+        /* 圖片模糊設定 */
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            /* 預設：模糊且變暗 */
+            filter: blur(15px) brightness(0.4);
+            transform: scale(1.15);
+            transition: all 0.5s ease;
         }
 
-        .card:hover img {
-            transform: scale(1.05); /* 輕微放大增加點擊感 */
+        /* 只有帶有 .active 的卡片（正中央那張），圖片才會變清晰 */
+        .card.active img {
+            filter: blur(0) brightness(1);
+            transform: scale(1);
         }
 
-        /* 圖片上的 #1 ~ #4 數字 */
+        /* 懸停時微微放大，增加互動感 */
+        .card.active:hover img {
+            transform: scale(1.05);
+        }
+
+        /* 縮小後的數字，永遠保持清晰 */
         .card-number {
             position: absolute;
-            top: 25px;
-            left: 30px;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: white;
+            top: 20px;
+            left: 25px;
+            font-size: 1.8rem; /* 字體變小，更精緻 */
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
             margin: 0;
             z-index: 10;
-            text-shadow: 2px 4px 15px rgba(0,0,0,0.6); /* 加強陰影讓數字在亮色圖片上也清楚 */
+            text-shadow: 1px 2px 10px rgba(0,0,0,0.8);
         }
     </style>
 </head>
@@ -98,88 +107,90 @@
     </div>
 
     <div class="wheel-container">
-        
         <a href="project1.html" class="card">
             <h3 class="card-number">#1</h3>
             <img src="https://picsum.photos/600/600?random=1" alt="作品 1">
         </a>
-
         <a href="project2.html" class="card">
             <h3 class="card-number">#2</h3>
             <img src="https://picsum.photos/600/600?random=2" alt="作品 2">
         </a>
-
         <a href="project3.html" class="card">
             <h3 class="card-number">#3</h3>
             <img src="https://picsum.photos/600/600?random=3" alt="作品 3">
         </a>
-
         <a href="project4.html" class="card">
             <h3 class="card-number">#4</h3>
             <img src="https://picsum.photos/600/600?random=4" alt="作品 4">
         </a>
-
     </div>
 
     <script>
         const cards = document.querySelectorAll('.card');
-        let activeIndex = 0; // 記錄當前在正中央的是哪一張卡片
-        let isScrolling = false; // 煞車系統：防止滾輪一次滑太多張
+        const totalCards = cards.length;
+        let activeIndex = 0; 
+        let isScrolling = false; 
 
-        // 計算卡片位置的函式
         function updateWheel() {
             cards.forEach((card, index) => {
-                // 算出每張卡片距離「中心點 (activeIndex)」有多遠
-                // diff = 0 代表正中央，diff = 1 代表右邊一張，diff = -1 代表左邊一張
+                // 迴圈數學：計算每張卡片距離中心的「最短路徑」
                 let diff = index - activeIndex;
 
-                // 核心數學公式：製造扇形轉盤感
-                let translateX = diff * 220; // 左右拉開的距離
-                let translateY = Math.abs(diff) * 60; // 越旁邊的往下沉
-                let rotateZ = diff * 12; // 加上微微的傾斜角度
-                let scale = 1 - Math.abs(diff) * 0.15; // 越旁邊的越小
+                if (diff > Math.floor(totalCards / 2)) {
+                    diff -= totalCards;
+                } else if (diff < -Math.floor(totalCards / 2)) {
+                    diff += totalCards;
+                }
 
-                // 執行變形與層級排序 (確保中間那張永遠在最上層)
+                // 物理位置計算
+                let translateX = diff * 240; 
+                let translateY = Math.abs(diff) * 40; 
+                let rotateZ = diff * 8; 
+                let scale = 1 - Math.abs(diff) * 0.15; 
+
                 card.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotateZ}deg) scale(${scale})`;
                 card.style.zIndex = 100 - Math.abs(diff);
 
-                // 如果離中心太遠 (超過2張)，就讓它變透明隱藏
-                if (Math.abs(diff) > 2) {
-                    card.style.opacity = 0;
-                    card.style.pointerEvents = 'none'; // 隱藏時不可點擊
-                } else {
-                    card.style.opacity = 1 - Math.abs(diff) * 0.2; // 旁邊的稍微變暗一點點凸顯中央
+                // 控制中心卡片的清晰與模糊
+                if (diff === 0) {
+                    card.classList.add('active'); // 在中間：掛上 active 讓 CSS 變清晰
+                    card.style.opacity = 1;
                     card.style.pointerEvents = 'auto';
+                } else {
+                    card.classList.remove('active'); // 不在中間：拔掉 active 恢復模糊
+                    
+                    // 藏起背後的卡片，避免迴圈時穿幫
+                    if (Math.abs(diff) > 1) {
+                        card.style.opacity = 0;
+                        card.style.pointerEvents = 'none';
+                    } else {
+                        card.style.opacity = 0.6; // 左右兩邊的卡片稍微變透明
+                        card.style.pointerEvents = 'none';
+                    }
                 }
             });
         }
 
-        // 網頁一打開先排好位置
         updateWheel();
 
-        // 監聽滑鼠滾輪事件
         window.addEventListener('wheel', (e) => {
-            // 如果還在切換動畫中，不接受新的滾動指令
             if (isScrolling) return;
 
             if (e.deltaY > 0) {
-                // 往下滑，前進下一張
-                activeIndex++;
+                // 往下滑：往下一張，並利用 % 達成無限迴圈
+                activeIndex = (activeIndex + 1) % totalCards;
             } else {
-                // 往上滑，退回上一張
-                activeIndex--;
+                // 往上滑：往上一張，無限迴圈
+                activeIndex = (activeIndex - 1 + totalCards) % totalCards;
             }
-
-            // 限制範圍：不能小於 0，也不能大於最後一張的編號
-            activeIndex = Math.max(0, Math.min(activeIndex, cards.length - 1));
 
             updateWheel();
 
-            // 踩下煞車，0.6秒後才能滑下一張 (需與 CSS 的 transition 時間配合)
+            // 煞車時間減半，現在只要 300 毫秒就能滑下一張
             isScrolling = true;
             setTimeout(() => {
                 isScrolling = false;
-            }, 600);
+            }, 300); 
         });
     </script>
 </body>
