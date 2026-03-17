@@ -5,145 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hsu YU CHIEN - Portfolio</title>
     <style>
-        /* 基礎設定與字體 */
+        /* 基礎設定 */
         body {
             margin: 0;
-            background-color: #050505; /* 極致黑底 */
-            color: #fff;
+            background-color: #0f0f0f;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column; /* 改為直向排列以容納標題 */
-            justify-content: center;
+            overflow: hidden; /* 隱藏系統預設的上下滾動條 */
             height: 100vh;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- 需求 1：大標題區塊 --- */
+        /* --- 需求 3：灰色的大字標題 --- */
         .hero {
             text-align: center;
-            margin-bottom: 30px;
-            animation: fadeInDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(-30px);
+            margin-top: 6vh;
+            z-index: 200; /* 確保標題永遠在最上層 */
+            pointer-events: none; /* 讓滑鼠點擊可以穿透標題點到卡片 */
         }
 
         .hero h1 {
-            font-size: 4rem;
+            font-size: 4.5rem;
             font-weight: 800;
+            color: #b0b0b0; /* 質感淺灰色 */
             margin: 0;
-            letter-spacing: 4px;
+            letter-spacing: 5px;
             text-transform: uppercase;
         }
 
         .hero h2 {
             font-size: 1.2rem;
-            font-weight: 300;
-            color: #888;
-            letter-spacing: 8px;
-            margin-top: 10px;
+            font-weight: 400;
+            color: #666; /* 深灰色副標 */
+            letter-spacing: 10px;
+            margin-top: 5px;
             text-transform: uppercase;
         }
 
-        /* 橫向滑動軌道 */
-        .slider {
+        /* --- 需求 2：重疊轉盤容器 --- */
+        .wheel-container {
+            position: relative;
+            flex-grow: 1;
             display: flex;
-            gap: 40px;
-            padding: 20px 5vw; /* 讓左右有呼吸空間 */
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            width: 100%;
-            box-sizing: border-box;
-            scrollbar-width: none; 
-        }
-        .slider::-webkit-scrollbar { display: none; }
-
-        /* 卡片容器：加入超連結標籤的樣式清除 */
-        .card-link {
-            text-decoration: none; /* 移除超連結底線 */
-            color: inherit;
-            flex: 0 0 320px;
-            scroll-snap-align: center;
-            display: block;
+            justify-content: center;
+            align-items: center;
         }
 
+        /* --- 需求 1：正方形圖片卡片 --- */
         .card {
-            width: 100%;
-            height: 480px;
+            position: absolute;
+            width: 400px;
+            height: 400px; /* 長寬一致，確保是正方形 */
             border-radius: 20px;
             overflow: hidden;
-            position: relative;
-            opacity: 0;
-            transform: translateY(40px) scale(0.95);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            cursor: pointer;
+            /* 轉盤切換時的順滑動畫 */
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .card.show {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* 圖片初始狀態：模糊 + 放大 */
+        /* 圖片設定：移除模糊，保持清晰 */
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: blur(20px) brightness(0.5);
-            transform: scale(1.15);
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-                        filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform, filter;
+            transition: transform 0.5s ease;
         }
 
-        .card-link:hover img {
-            filter: blur(0) brightness(0.9);
-            transform: scale(1);
+        .card:hover img {
+            transform: scale(1.05); /* 輕微放大增加點擊感 */
         }
 
-        /* --- 需求 2：文字順序上移的動畫核心 --- */
-        .card-content {
+        /* 圖片上的 #1 ~ #4 數字 */
+        .card-number {
             position: absolute;
-            bottom: 30px;
+            top: 25px;
             left: 30px;
-            right: 30px;
-        }
-
-        /* 將標題、副標、按鈕的初始狀態都設為：透明且往下掉 20px */
-        .card-content h3, 
-        .card-content p, 
-        .card-content .btn {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: white;
             margin: 0;
-            opacity: 0;
-            transform: translateY(20px);
-            /* 預設退場速度 */
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-        }
-
-        .card-content h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
-        .card-content p { font-size: 1rem; color: #ccc; margin-bottom: 15px; }
-        .card-content .btn { 
-            display: inline-block; 
-            font-size: 0.85rem; 
-            border: 1px solid rgba(255,255,255,0.5); 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-        }
-
-        /* 懸停時的狀態：透明度變 1，回到原位 */
-        .card-link:hover .card-content h3,
-        .card-link:hover .card-content p,
-        .card-link:hover .card-content .btn {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 關鍵：利用 transition-delay 設定「排隊進場」的時間差 */
-        .card-link:hover .card-content h3 { transition-delay: 0.1s; } /* 最先出來 */
-        .card-link:hover .card-content p  { transition-delay: 0.2s; } /* 慢 0.1 秒出來 */
-        .card-link:hover .card-content .btn { transition-delay: 0.3s; } /* 最後出來 */
-
-        /* 大標題進場關鍵影格 */
-        @keyframes fadeInDown {
-            to { opacity: 1; transform: translateY(0); }
+            z-index: 10;
+            text-shadow: 2px 4px 15px rgba(0,0,0,0.6); /* 加強陰影讓數字在亮色圖片上也清楚 */
         }
     </style>
 </head>
@@ -154,41 +97,90 @@
         <h2>Portfolio</h2>
     </div>
 
-    <div class="slider">
-        <a href="project1.html" class="card-link">
-            <div class="card">
-                <img src="https://picsum.photos/800/1000?random=1" alt="作品封面">
-                <div class="card-content">
-                    <h3>品牌識別設計</h3>
-                    <p>Visual Identity & Branding</p>
-                    <span class="btn">View Project</span>
-                </div>
-            </div>
+    <div class="wheel-container">
+        
+        <a href="project1.html" class="card">
+            <h3 class="card-number">#1</h3>
+            <img src="https://picsum.photos/600/600?random=1" alt="作品 1">
         </a>
 
-        <a href="project2.html" class="card-link">
-            <div class="card">
-                <img src="https://picsum.photos/800/1000?random=2" alt="作品封面">
-                <div class="card-content">
-                    <h3>互動式網頁</h3>
-                    <p>Web Development</p>
-                    <span class="btn">View Project</span>
-                </div>
-            </div>
+        <a href="project2.html" class="card">
+            <h3 class="card-number">#2</h3>
+            <img src="https://picsum.photos/600/600?random=2" alt="作品 2">
         </a>
+
+        <a href="project3.html" class="card">
+            <h3 class="card-number">#3</h3>
+            <img src="https://picsum.photos/600/600?random=3" alt="作品 3">
+        </a>
+
+        <a href="project4.html" class="card">
+            <h3 class="card-number">#4</h3>
+            <img src="https://picsum.photos/600/600?random=4" alt="作品 4">
+        </a>
+
     </div>
 
     <script>
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('show');
-                    obs.unobserve(entry.target);
+        const cards = document.querySelectorAll('.card');
+        let activeIndex = 0; // 記錄當前在正中央的是哪一張卡片
+        let isScrolling = false; // 煞車系統：防止滾輪一次滑太多張
+
+        // 計算卡片位置的函式
+        function updateWheel() {
+            cards.forEach((card, index) => {
+                // 算出每張卡片距離「中心點 (activeIndex)」有多遠
+                // diff = 0 代表正中央，diff = 1 代表右邊一張，diff = -1 代表左邊一張
+                let diff = index - activeIndex;
+
+                // 核心數學公式：製造扇形轉盤感
+                let translateX = diff * 220; // 左右拉開的距離
+                let translateY = Math.abs(diff) * 60; // 越旁邊的往下沉
+                let rotateZ = diff * 12; // 加上微微的傾斜角度
+                let scale = 1 - Math.abs(diff) * 0.15; // 越旁邊的越小
+
+                // 執行變形與層級排序 (確保中間那張永遠在最上層)
+                card.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotateZ}deg) scale(${scale})`;
+                card.style.zIndex = 100 - Math.abs(diff);
+
+                // 如果離中心太遠 (超過2張)，就讓它變透明隱藏
+                if (Math.abs(diff) > 2) {
+                    card.style.opacity = 0;
+                    card.style.pointerEvents = 'none'; // 隱藏時不可點擊
+                } else {
+                    card.style.opacity = 1 - Math.abs(diff) * 0.2; // 旁邊的稍微變暗一點點凸顯中央
+                    card.style.pointerEvents = 'auto';
                 }
             });
-        }, { threshold: 0.15 });
+        }
 
-        document.querySelectorAll('.card').forEach(card => observer.observe(card));
+        // 網頁一打開先排好位置
+        updateWheel();
+
+        // 監聽滑鼠滾輪事件
+        window.addEventListener('wheel', (e) => {
+            // 如果還在切換動畫中，不接受新的滾動指令
+            if (isScrolling) return;
+
+            if (e.deltaY > 0) {
+                // 往下滑，前進下一張
+                activeIndex++;
+            } else {
+                // 往上滑，退回上一張
+                activeIndex--;
+            }
+
+            // 限制範圍：不能小於 0，也不能大於最後一張的編號
+            activeIndex = Math.max(0, Math.min(activeIndex, cards.length - 1));
+
+            updateWheel();
+
+            // 踩下煞車，0.6秒後才能滑下一張 (需與 CSS 的 transition 時間配合)
+            isScrolling = true;
+            setTimeout(() => {
+                isScrolling = false;
+            }, 600);
+        });
     </script>
 </body>
 </html>
