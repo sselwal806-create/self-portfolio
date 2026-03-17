@@ -15,13 +15,16 @@
             flex-direction: column;
         }
 
-        /* --- 標題與轉盤區 (維持你最愛的原樣) --- */
+        /* =========================================
+           1. 標題與進場動畫區 (你要求的高級感動畫)
+           ========================================= */
         .hero {
             text-align: center;
             margin-top: 8vh;
             z-index: 50; 
             pointer-events: none; 
         }
+
         .hero h1 {
             font-size: 4.5rem;
             font-weight: 800;
@@ -29,7 +32,14 @@
             margin: 0;
             letter-spacing: 5px;
             text-transform: uppercase;
+            
+            /* 動畫初始狀態：透明且往下沉 20px */
+            opacity: 0;
+            transform: translateY(20px);
+            /* 動畫執行：名稱、時間 1秒、絲滑貝茲曲線、延遲 0.2秒開始、停在最終狀態 */
+            animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
         }
+
         .hero h2 {
             font-size: 1.2rem;
             font-weight: 400;
@@ -37,8 +47,25 @@
             letter-spacing: 10px;
             margin-top: 5px;
             text-transform: uppercase;
+
+            /* 動畫初始狀態：透明且往下沉 20px */
+            opacity: 0;
+            transform: translateY(20px);
+            /* 副標題比主標題多延遲 0.2 秒 (變為 0.4秒開始)，創造層次感 */
+            animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
         }
 
+        /* 定義文字浮現的關鍵影格 */
+        @keyframes textFadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================
+           2. 轉盤與卡片區 (維持不變)
+           ========================================= */
         .wheel-container {
             position: relative;
             flex-grow: 1;
@@ -89,24 +116,21 @@
         }
 
         /* =========================================
-           新增區塊：漢堡按鈕與全螢幕選單 
+           3. 漢堡按鈕與全螢幕選單區 (維持不變)
            ========================================= */
-        
-        /* 1. 漢堡按鈕 (右上角) */
         .menu-toggle {
             position: fixed;
             top: 40px;
             right: 50px;
             width: 40px;
             height: 30px;
-            z-index: 999; /* 確保永遠在最上層 */
+            z-index: 999; 
             cursor: pointer;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        /* 漢堡按鈕的「三條線」 */
         .menu-toggle span {
             display: block;
             height: 3px;
@@ -114,57 +138,32 @@
             background-color: #fff;
             border-radius: 3px;
             transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: right center; /* 設定旋轉中心點 */
+            transform-origin: right center; 
         }
 
-        /* 漢堡按鈕變成「X」的動畫 */
-        .menu-toggle.active span:nth-child(1) {
-            transform: rotate(-45deg) scaleX(1.1);
-        }
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0; /* 中間那條線消失 */
-        }
-        .menu-toggle.active span:nth-child(3) {
-            transform: rotate(45deg) scaleX(1.1);
-        }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(-45deg) scaleX(1.1); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(45deg) scaleX(1.1); }
 
-        /* 2. 全螢幕選單背景 */
         .menu-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px); /* 背景毛玻璃效果 */
+            backdrop-filter: blur(10px); 
             z-index: 900;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 預設隱藏 */
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease;
         }
 
-        /* 當選單被打開時 */
-        .menu-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .menu-overlay.active { opacity: 1; pointer-events: auto; }
 
-        /* 3. 選單文字排版 */
-        .menu-links {
-            list-style: none;
-            padding: 0;
-            text-align: center;
-        }
-
-        .menu-links li {
-            margin: 30px 0;
-            overflow: hidden; /* 為了讓文字有「從下往上浮現」的遮罩效果 */
-        }
-
+        .menu-links { list-style: none; padding: 0; text-align: center; }
+        .menu-links li { margin: 30px 0; overflow: hidden; }
+        
         .menu-links a {
             display: inline-block;
             text-decoration: none;
@@ -173,35 +172,30 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 5px;
-            /* 預設文字往下沉 */
             transform: translateY(100%);
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
         }
 
-        /* 選單打開時，文字依序浮現 (加上延遲) */
         .menu-overlay.active .menu-links li:nth-child(1) a { transform: translateY(0); transition-delay: 0.1s; }
         .menu-overlay.active .menu-links li:nth-child(2) a { transform: translateY(0); transition-delay: 0.2s; }
         .menu-overlay.active .menu-links li:nth-child(3) a { transform: translateY(0); transition-delay: 0.3s; }
         .menu-overlay.active .menu-links li:nth-child(4) a { transform: translateY(0); transition-delay: 0.4s; }
+        .menu-links a:hover { color: #fff; }
 
-        /* 滑鼠移上去時變白色 */
-        .menu-links a:hover {
-            color: #fff;
-        }
     </style>
 </head>
 <body>
 
     <div class="menu-toggle" id="menuToggle">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </div>
 
     <div class="menu-overlay" id="menuOverlay">
         <ul class="menu-links">
             <li><a href="index.html">Home</a></li>
-            <li><a href="project1.html">Works</a></li> <li><a href="about.html">About</a></li>   <li><a href="mailto:your-email@example.com">Contact</a></li>
+            <li><a href="project1.html">Works</a></li> 
+            <li><a href="about.html">About</a></li>   
+            <li><a href="mailto:your-email@example.com">Contact</a></li>
         </ul>
     </div>
 
@@ -230,17 +224,16 @@
     </div>
 
     <script>
-        // --- 選單控制 JS ---
+        // 選單控制
         const menuToggle = document.getElementById('menuToggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
         menuToggle.addEventListener('click', () => {
-            // 切換 active 類別，來觸發 CSS 的動畫
             menuToggle.classList.toggle('active');
             menuOverlay.classList.toggle('active');
         });
 
-        // --- 轉盤控制 JS (維持原樣) ---
+        // 轉盤控制
         const cards = document.querySelectorAll('.card');
         const totalCards = cards.length;
         let activeIndex = 0; 
@@ -284,7 +277,6 @@
         updateWheel();
 
         window.addEventListener('wheel', (e) => {
-            // 如果選單是打開的狀態，就鎖定轉盤不要轉
             if (isScrolling || menuOverlay.classList.contains('active')) return;
 
             if (e.deltaY > 0) {
