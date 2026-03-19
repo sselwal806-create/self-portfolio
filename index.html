@@ -15,9 +15,7 @@
             flex-direction: column;
         }
 
-        /* =========================================
-           1. 標題與進場動畫區 (你要求的高級感動畫)
-           ========================================= */
+        /* --- 標題與進場動畫區 --- */
         .hero {
             text-align: center;
             margin-top: 8vh;
@@ -32,11 +30,8 @@
             margin: 0;
             letter-spacing: 5px;
             text-transform: uppercase;
-            
-            /* 動畫初始狀態：透明且往下沉 20px */
             opacity: 0;
             transform: translateY(20px);
-            /* 動畫執行：名稱、時間 1秒、絲滑貝茲曲線、延遲 0.2秒開始、停在最終狀態 */
             animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
         }
 
@@ -44,28 +39,19 @@
             font-size: 1.2rem;
             font-weight: 400;
             color: #555; 
-            letter-spacing: 15px;
+            letter-spacing: 10px;
             margin-top: 5px;
             text-transform: uppercase;
-
-            /* 動畫初始狀態：透明且往下沉 20px */
             opacity: 0;
             transform: translateY(20px);
-            /* 副標題比主標題多延遲 0.2 秒 (變為 0.4秒開始)，創造層次感 */
             animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
         }
 
-        /* 定義文字浮現的關鍵影格 */
         @keyframes textFadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* =========================================
-           2. 轉盤與卡片區 (維持不變)
-           ========================================= */
+        /* --- 轉盤與卡片區 --- */
         .wheel-container {
             position: relative;
             flex-grow: 1;
@@ -103,6 +89,7 @@
             transform: scale(1.05);
         }
 
+        /* 數字排版 (左上角) */
         .card-number {
             position: absolute;
             top: 20px;
@@ -115,29 +102,32 @@
             text-shadow: 1px 2px 10px rgba(0,0,0,0.8);
         }
 
-        /* =========================================
-           3. 漢堡按鈕與全螢幕選單區 (維持不變)
-           ========================================= */
+        /* 新增：作品名稱排版 (左下角) */
+        .card-name {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            right: 25px; /* 限制寬度避免超出邊界 */
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.95);
+            margin: 0;
+            z-index: 10;
+            text-shadow: 2px 4px 15px rgba(0,0,0,0.9); /* 加深陰影，確保在亮色圖片上也清晰可見 */
+            line-height: 1.3;
+        }
+
+        /* --- 漢堡按鈕與全螢幕選單區 --- */
         .menu-toggle {
-            position: fixed;
-            top: 40px;
-            right: 50px;
-            width: 40px;
-            height: 30px;
-            z-index: 999; 
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            position: fixed; top: 40px; right: 50px;
+            width: 40px; height: 30px; z-index: 999; 
+            cursor: pointer; display: flex;
+            flex-direction: column; justify-content: space-between;
         }
 
         .menu-toggle span {
-            display: block;
-            height: 3px;
-            width: 100%;
-            background-color: #fff;
-            border-radius: 3px;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: block; height: 3px; width: 100%; background-color: #fff;
+            border-radius: 3px; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             transform-origin: right center; 
         }
 
@@ -146,17 +136,10 @@
         .menu-toggle.active span:nth-child(3) { transform: rotate(45deg) scaleX(1.1); }
 
         .menu-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px); 
-            z-index: 900;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); 
+            z-index: 900; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
         }
 
         .menu-overlay.active { opacity: 1; pointer-events: auto; }
@@ -165,14 +148,9 @@
         .menu-links li { margin: 30px 0; overflow: hidden; }
         
         .menu-links a {
-            display: inline-block;
-            text-decoration: none;
-            color: #555;
-            font-size: 3.5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            transform: translateY(100%);
+            display: inline-block; text-decoration: none; color: #555;
+            font-size: 3.5rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 5px; transform: translateY(100%);
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
         }
 
@@ -205,26 +183,45 @@
     </div>
 
     <div class="wheel-container">
+        
         <a href="project1.html" class="card">
             <h3 class="card-number">#1</h3>
-            <img src="https://picsum.photos/600/600?random=1" alt="作品 1">
+            <h4 class="card-name">Under The Seat</h4>
+            <img src="undertheseattitle.jpg" alt="Under The Seat">
         </a>
+
         <a href="project2.html" class="card">
             <h3 class="card-number">#2</h3>
-            <img src="https://picsum.photos/600/600?random=2" alt="作品 2">
+            <h4 class="card-name">幽靈之城</h4>
+            <img src="https://picsum.photos/600/600?random=2" alt="幽靈之城">
         </a>
+
         <a href="project3.html" class="card">
             <h3 class="card-number">#3</h3>
-            <img src="https://picsum.photos/600/600?random=3" alt="作品 3">
+            <h4 class="card-name">馬賽克，你的臉上</h4>
+            <img src="https://picsum.photos/600/600?random=3" alt="馬賽克，你的臉上">
         </a>
+
         <a href="project4.html" class="card">
             <h3 class="card-number">#4</h3>
-            <img src="https://picsum.photos/600/600?random=4" alt="作品 4">
+            <h4 class="card-name">Psyexplodie混亂轉播</h4>
+            <img src="https://picsum.photos/600/600?random=4" alt="Psyexplodie混亂轉播">
         </a>
-    </div>
 
+        <a href="project5.html" class="card">
+            <h3 class="card-number">#5</h3>
+            <h4 class="card-name">即將公開 (TBA)</h4>
+            <img src="https://picsum.photos/600/600?random=5" alt="保留作品 5">
+        </a>
+
+        <a href="project6.html" class="card">
+            <h3 class="card-number">#6</h3>
+            <h4 class="card-name">即將公開 (TBA)</h4>
+            <img src="https://picsum.photos/600/600?random=6" alt="保留作品 6">
+        </a>
+
+    </div>
     <script>
-        // 選單控制
         const menuToggle = document.getElementById('menuToggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
