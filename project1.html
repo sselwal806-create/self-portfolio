@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under The Seat - Hsu YU CHIEN Portfolio</title>
+    <style>
+        /* 基礎設定 & 字體 (跟主頁保持一致) */
+        body {
+            margin: 0;
+            background-color: #0f0f0f; /* 極致黑 */
+            color: #d0d0d0; /* 質感淺灰字 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 頁面主要容器 (左圖右文) */
+        .container {
+            display: flex;
+            gap: 6vw; /* 兩欄中間的呼吸空間 */
+            max-width: 1400px; /* 限制最大寬度，避免在大螢幕上太散 */
+            width: 90%;
+            padding: 80px 0;
+            box-sizing: border-box;
+            align-items: flex-start; /* 讓兩欄從頂部對齊 */
+        }
+
+        /* =========================================
+           1. 幻燈片播放器 (左側)
+           ========================================= */
+        .slideshow-col {
+            flex: 1.4; /* 左側佔比稍微大一點 */
+            position: relative;
+            
+            /* --- 動畫設定：淡入並向上浮現 --- */
+            opacity: 0;
+            transform: translateY(40px);
+            /* 名稱、持續時間、絲滑貝茲曲線、延遲時間、停在最終狀態 */
+            animation: elegantFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+        }
+
+        /* 2. 主圖區域 */
+        .main-img-area {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* 4:3 比例，可依據你的圖片調整 */
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .main-img-area img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; /* 讓圖片填滿且不變形 */
+            opacity: 0; /* 預設隱藏，由 JS 控制顯示 */
+            transition: opacity 0.6s ease; /* 換圖時的淡入淡出 */
+        }
+
+        .main-img-area img.active {
+            opacity: 1; /* 當前顯示的圖片 */
+        }
+
+        /* 3. 左右按鈕箭頭 */
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 10;
+            transition: background 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        .arrow:hover { background: rgba(255, 255, 255, 0.2); }
+        .arrow-left { left: 20px; }
+        .arrow-right { right: 20px; }
+
+        /* 4. 小圖點選區域 (Thumbs) */
+        .thumbs-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); /* 6張小圖排成一橫排 */
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .thumb {
+            width: 100%;
+            height: 0;
+            padding-bottom: 75%; /* 保持 4:3 比例跟主圖一致 */
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            border: 2px solid transparent;
+        }
+
+        .thumb img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: brightness(0.5); /* 未選中時變暗 */
+            transition: filter 0.3s ease;
+        }
+
+        /* 選中時的小圖樣式 */
+        .thumb.active {
+            border-color: #555; /* 加一個灰色邊框 */
+        }
+        .thumb.active img, .thumb:hover img {
+            filter: brightness(1); /* 變亮 */
+        }
+
+        /* =========================================
+           2. 作品說明 (右側)
+           ========================================= */
+        .content-col {
+            flex: 1; /* 右側佔比稍微小一點 */
+            position: sticky; /* 讓文字在滑動時固定，增加高級感 */
+            top: 80px;
+            
+            /* --- 動畫設定：比左側慢 0.2 秒浮現，創造層次感 --- */
+            opacity: 0;
+            transform: translateY(40px);
+            animation: elegantFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        }
+
+        /* 主標題：Under The Seat */
+        .content-col h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #b0b0b0; /* 質感灰色大字 */
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 副標題或年份 */
+        .content-col h2 {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #666;
+            margin: 5px 0 40px 0;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        /* 論述文字排版 */
+        .description p {
+            font-size: 1.1rem;
+            line-height: 1.8; /* 讓行距拉開，閱讀更舒服 */
+            color: #a1a1a1;
+            margin-bottom: 25px;
+        }
+
+        /* 返回按鈕 (Home) */
+        .back-home {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 10px 0;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .back-home:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        /* =========================================
+           3. 動畫與手持裝置適配 
+           ========================================= */
+        @keyframes elegantFadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RWD 響應式設計：在手機上改為直向排列 */
+        @media (max-width: 900px) {
+            .container { flex-direction: column; padding: 50px 0; }
+            .slideshow-col, .content-col { flex: none; width: 100%; }
+            .content-col { position: static; margin-top: 50px; }
+            .content-col h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="slideshow-col">
+            <div class="main-img-area">
+                <button class="arrow arrow-left" id="prevBtn">&#10094;</button>
+                <button class="arrow arrow-right" id="nextBtn">&#10095;</button>
+
+                <img src="https://picsum.photos/1200/900?random=11" alt="Under The Seat 01" class="main-img active">
+                <img src="https://picsum.photos/1200/900?random=12" alt="Under The Seat 02" class="main-img">
+                <img src="https://picsum.photos/1200/900?random=13" alt="Under The Seat 03" class="main-img">
+                <img src="https://picsum.photos/1200/900?random=14" alt="Under The Seat 04" class="main-img">
+                <img src="https://picsum.photos/1200/900?random=15" alt="Under The Seat 05" class="main-img">
+                <img src="https://picsum.photos/1200/900?random=16" alt="Under The Seat 06" class="main-img">
+            </div>
+
+            <div class="thumbs-grid">
+                <div class="thumb active"><img src="https://picsum.photos/400/300?random=11" alt="Thumb 01"></div>
+                <div class="thumb"><img src="https://picsum.photos/400/300?random=12" alt="Thumb 02"></div>
+                <div class="thumb"><img src="https://picsum.photos/400/300?random=13" alt="Thumb 03"></div>
+                <div class="thumb"><img src="https://picsum.photos/400/300?random=14" alt="Thumb 04"></div>
+                <div class="thumb"><img src="https://picsum.photos/400/300?random=15" alt="Thumb 05"></div>
+                <div class="thumb"><img src="https://picsum.photos/400/300?random=16" alt="Thumb 06"></div>
+            </div>
+        </div>
+
+        <div class="content-col">
+            <h1>Under The Seat</h1>
+            <h2>© 2024 / Visionary Design</h2>
+
+            <div class="description">
+                <p>這是一個關於探索被遺忘空間的視覺企劃。 Under The Seat 透過獨特的攝影視角與材質語彙，帶領觀者深入平常被忽略的「椅子下方」，挖掘那些在日常生活中不被看見、卻真實存在的結構美與私密敘事。</p>
+                <p>我們利用宏觀攝影捕捉了時間在金屬、木材與皮革上留下的痕跡。這些痕跡不只是磨損，更是人與物互動的證明，構成了一個個微觀的城市風景線。</p>
+                <p>在設計執行上，我們刻意採用了高對比的黑白色調，強調結構的幾何線條，並透過極簡的排版，讓觀者能完全沉浸在作品本身的張力與詩意之中。</p>
+            </div>
+
+            <a href="index.html" class="back-home">← Back to Home</a>
+        </div>
+
+    </div>
+
+    <script>
+        const mainImages = document.querySelectorAll('.main-img');
+        const thumbs = document.querySelectorAll('.thumb');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentIndex = 0; // 記錄當前顯示的是第幾張
+
+        // 換圖的函式
+        function showSlide(index) {
+            // 先把所有的 active 狀態都拿掉
+            mainImages.forEach(img => img.classList.remove('active'));
+            thumbs.forEach(thumb => thumb.classList.remove('active'));
+
+            // 算出新的 index (迴圈邏輯)
+            if (index >= mainImages.length) {
+                currentIndex = 0; // 超過最後一張就回到第一張
+            } else if (index < 0) {
+                currentIndex = mainImages.length - 1; // 小於第一張就去最後一張
+            } else {
+                currentIndex = index;
+            }
+
+            // 給對應的圖加上 active 狀態
+            mainImages[currentIndex].classList.add('active');
+            thumbs[currentIndex].classList.add('active');
+        }
+
+        // 按鈕箭頭控制
+        prevBtn.addEventListener('click', () => {
+            showSlide(currentIndex - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            showSlide(currentIndex + 1);
+        });
+
+        // 小圖點選控制 (使用 Array.from 將 NodeList 轉為陣列以使用 forEach)
+        thumbs.forEach((thumb, index) => {
+            thumb.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+
+        // 選用：支援滑鼠滾輪或鍵盤左右鍵換圖
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') showSlide(currentIndex - 1);
+            if (e.key === 'ArrowRight') showSlide(currentIndex + 1);
+        });
+    </script>
+</body>
+</html>
