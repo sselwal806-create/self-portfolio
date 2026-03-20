@@ -5,80 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Under The Seat - Hsu YU CHIEN Portfolio</title>
     <style>
-        /* 基礎設定 & 字體 */
+        /* =========================================
+           基礎設定 & 字體
+           ========================================= */
         body {
             margin: 0;
             background-color: #0f0f0f; 
             color: #d0d0d0; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            /* 移除原本的 flex center，讓網頁可以正常往下滾動 */
         }
 
-        .container {
-            display: flex;
-            gap: 6vw; 
-            max-width: 1400px; 
+        /* 讓內容維持在中央並限制最大寬度 */
+        .wrapper {
+            max-width: 1400px;
             width: 90%;
-            padding: 80px 0;
-            box-sizing: border-box;
-            align-items: flex-start; 
+            margin: 0 auto;
+        }
+
+        /* 共用：滑動浮現動畫的初始狀態 */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        /* 當 JS 偵測到進入畫面時，加上 active 讓它浮現 */
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* =========================================
-           1. 幻燈片播放器 (左側)
+           第一區：作品首圖與介紹 (Intro Section)
            ========================================= */
+        .intro-section {
+            min-height: 100vh; /* 確保第一屏佔滿畫面 */
+            display: flex;
+            align-items: center;
+            padding: 80px 0;
+            box-sizing: border-box;
+        }
+
+        .intro-container {
+            display: flex;
+            gap: 6vw; 
+            width: 100%;
+            align-items: flex-start; 
+        }
+
+        /* 左側幻燈片 */
         .slideshow-col {
             flex: 1.4; 
             position: relative;
-            
-            /* --- 修改：讓動畫上升更慢、距離更長 --- */
             opacity: 0;
-            transform: translateY(60px); /* 從更低的地方升起 */
-            /* 動畫時間從 1.2s 改為 1.8s，變得更緩慢絲滑 */
+            transform: translateY(60px);
             animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
         }
 
         .main-img-area {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 75%; 
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            overflow: hidden;
+            position: relative; width: 100%; height: 0; padding-bottom: 75%; 
+            background-color: #1a1a1a; border-radius: 12px; overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         .main-img-area img {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; 
-            opacity: 0; 
-            transition: opacity 0.6s ease; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0; transition: opacity 0.6s ease; 
         }
 
-        .main-img-area img.active {
-            opacity: 1; 
-        }
+        .main-img-area img.active { opacity: 1; }
 
         .arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            z-index: 10;
-            transition: background 0.3s ease;
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%; cursor: pointer;
+            font-size: 1.5rem; z-index: 10; transition: background 0.3s ease;
             backdrop-filter: blur(5px);
         }
         .arrow:hover { background: rgba(255, 255, 255, 0.2); }
@@ -86,155 +88,261 @@
         .arrow-right { right: 20px; }
 
         .thumbs-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr); 
-            gap: 15px;
-            margin-top: 20px;
+            display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-top: 20px;
         }
 
         .thumb {
-            width: 100%;
-            height: 0;
-            padding-bottom: 75%; 
-            border-radius: 6px;
-            overflow: hidden;
-            background-color: #1a1a1a;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            border: 2px solid transparent;
+            width: 100%; height: 0; padding-bottom: 75%; border-radius: 6px;
+            overflow: hidden; background-color: #1a1a1a; cursor: pointer;
+            transition: all 0.3s ease; box-sizing: border-box; border: 2px solid transparent;
         }
 
         .thumb img {
             width: 100%; height: 100%; object-fit: cover;
-            filter: brightness(0.5); 
-            transition: filter 0.3s ease;
+            filter: brightness(0.5); transition: filter 0.3s ease;
         }
-
         .thumb.active { border-color: #555; }
         .thumb.active img, .thumb:hover img { filter: brightness(1); }
 
-        /* =========================================
-           2. 作品說明 (右側)
-           ========================================= */
+        /* 右側文字說明 */
         .content-col {
             flex: 1; 
-            position: sticky; 
-            top: 80px;
-            
-            /* --- 修改：右側文字也變慢，並且稍微晚一點點才出發 --- */
-            opacity: 0;
-            transform: translateY(60px);
+            position: sticky; top: 80px;
+            opacity: 0; transform: translateY(60px);
             animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
         }
 
         .content-col h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #b0b0b0; 
-            margin: 0;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 3.5rem; font-weight: 800; color: #b0b0b0; margin: 0;
+            letter-spacing: 2px; text-transform: uppercase;
         }
-
         .content-col h2 {
-            font-size: 1rem;
-            font-weight: 400;
-            color: #666;
-            margin: 5px 0 5px 0; /* 調整了間距讓 h2, h3 更緊湊 */
-            letter-spacing: 5px;
-            text-transform: uppercase;
+            font-size: 1rem; font-weight: 400; color: #666; margin: 5px 0 40px 0;
+            letter-spacing: 5px; text-transform: uppercase;
         }
-        
-        /* 團隊成員名字的樣式 */
-        .content-col h3 {
-            font-size: 1rem;
-            font-weight: 400;
-            color: #888;
-            margin: 0 0 40px 0;
-            letter-spacing: 2px;
-        }
-
         .description p {
-            font-size: 1.1rem;
-            line-height: 1.8; 
-            color: #a1a1a1;
-            margin-bottom: 25px;
+            font-size: 1.1rem; line-height: 1.8; color: #a1a1a1; margin-bottom: 25px;
         }
 
-        .back-home {
-            display: inline-block;
-            margin-top: 50px;
-            text-decoration: none;
-            color: #888;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
+        /* =========================================
+           第二區：團隊分工 (Team & Roles)
+           ========================================= */
+        .team-section {
+            padding: 100px 0;
+            border-top: 1px solid #222; /* 加上微弱的黑色分隔線增加精緻感 */
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
             text-transform: uppercase;
-            padding: 10px 0;
-            border-bottom: 1px solid transparent;
-            transition: all 0.3s ease;
+            letter-spacing: 3px;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 劃分成 3 個等寬區塊 */
+            gap: 40px;
+        }
+
+        .team-member {
+            background: #151515;
+            padding: 40px 30px;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.4s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            background: #1a1a1a;
+        }
+
+        .team-member h3 {
+            font-size: 1.5rem; color: #fff; margin: 0 0 5px 0; letter-spacing: 2px;
+        }
+        .team-member h4 {
+            font-size: 0.9rem; color: #00ffc8; /* 用個跳色來點綴職位 */
+            margin: 0 0 20px 0; font-weight: 400; letter-spacing: 1px;
+        }
+        .team-member p {
+            font-size: 1rem; color: #888; line-height: 1.6; margin: 0;
+        }
+
+        /* =========================================
+           第三區：幕後製作 (Behind the Scenes)
+           ========================================= */
+        .bts-section {
+            padding: 80px 0 150px 0;
+        }
+
+        .bts-block {
+            display: flex;
+            align-items: center;
+            gap: 5vw;
+            margin-bottom: 120px; /* 兩頁之間的超大間距，創造呼吸感 */
+        }
+
+        /* 讓第二頁圖文左右反轉 */
+        .bts-block.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .bts-text {
+            flex: 1;
+        }
+        .bts-text h3 {
+            font-size: 2.2rem; color: #e0e0e0; margin: 0 0 20px 0; letter-spacing: 1px;
+        }
+        .bts-text p {
+            font-size: 1.1rem; line-height: 1.8; color: #999; margin-bottom: 15px;
+        }
+
+        .bts-image {
+            flex: 1.2;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .bts-image img {
+            width: 100%; height: auto; display: block;
+            transition: transform 0.8s ease;
+        }
+        .bts-image:hover img {
+            transform: scale(1.05); /* 輕微放大的互動感 */
+        }
+
+        /* =========================================
+           頁尾與按鈕
+           ========================================= */
+        .back-home {
+            display: block; width: max-content; margin: 0 auto 80px auto;
+            text-decoration: none; color: #888; font-size: 1rem;
+            letter-spacing: 3px; text-transform: uppercase;
+            padding: 15px 30px; border: 1px solid #333; border-radius: 30px;
+            transition: all 0.3s ease; text-align: center;
         }
         .back-home:hover {
-            color: #fff;
-            border-bottom-color: #fff;
+            color: #111; background-color: #fff; border-color: #fff;
         }
 
         @keyframes elegantFadeInUp {
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* =========================================
+           RWD 手機版適配
+           ========================================= */
         @media (max-width: 900px) {
-            .container { flex-direction: column; padding: 50px 0; }
+            .intro-container { flex-direction: column; }
             .slideshow-col, .content-col { flex: none; width: 100%; }
             .content-col { position: static; margin-top: 50px; }
             .content-col h1 { font-size: 2.5rem; }
+            
+            .team-grid { grid-template-columns: 1fr; /* 手機上分工變成直排 */ }
+            
+            .bts-block, .bts-block.reverse { flex-direction: column-reverse; gap: 30px; margin-bottom: 80px; }
+            .bts-text h3 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <div class="slideshow-col">
-            <div class="main-img-area">
-                <button class="arrow arrow-left" id="prevBtn">&#10094;</button>
-                <button class="arrow arrow-right" id="nextBtn">&#10095;</button>
-
-                <img src="undertheseattitle.jpg" alt="Under The Seat 01" class="main-img active">
-                <img src="undertheseat02.jpg" alt="Under The Seat 02" class="main-img">
-                <img src="img3.jpg" alt="Under The Seat 03" class="main-img">
-                <img src="img4.jpg" alt="Under The Seat 04" class="main-img">
-                <img src="img5.jpg" alt="Under The Seat 05" class="main-img">
-                <img src="img6.jpg" alt="Under The Seat 06" class="main-img">
+    <section class="intro-section">
+        <div class="wrapper intro-container">
+            
+            <div class="slideshow-col">
+                <div class="main-img-area">
+                    <button class="arrow arrow-left" id="prevBtn">&#10094;</button>
+                    <button class="arrow arrow-right" id="nextBtn">&#10095;</button>
+                    <img src="undertheseattitle.jpg" alt="Under The Seat 01" class="main-img active">
+                    <img src="img2.jpg" alt="Under The Seat 02" class="main-img">
+                    <img src="img3.jpg" alt="Under The Seat 03" class="main-img">
+                    <img src="img4.jpg" alt="Under The Seat 04" class="main-img">
+                    <img src="img5.jpg" alt="Under The Seat 05" class="main-img">
+                    <img src="img6.jpg" alt="Under The Seat 06" class="main-img">
+                </div>
+                <div class="thumbs-grid">
+                    <div class="thumb active"><img src="undertheseattitle.jpg" alt="Thumb 01"></div>
+                    <div class="thumb"><img src="img2.jpg" alt="Thumb 02"></div>
+                    <div class="thumb"><img src="img3.jpg" alt="Thumb 03"></div>
+                    <div class="thumb"><img src="img4.jpg" alt="Thumb 04"></div>
+                    <div class="thumb"><img src="img5.jpg" alt="Thumb 05"></div>
+                    <div class="thumb"><img src="img6.jpg" alt="Thumb 06"></div>
+                </div>
             </div>
 
-            <div class="thumbs-grid">
-                <div class="thumb active"><img src="undertheseattitle.jpg" alt="Thumb 01"></div>
-                <div class="thumb"><img src="undertheseat02.jpg" alt="Thumb 02"></div>
-                <div class="thumb"><img src="img3.jpg" alt="Thumb 03"></div>
-                <div class="thumb"><img src="img4.jpg" alt="Thumb 04"></div>
-                <div class="thumb"><img src="img5.jpg" alt="Thumb 05"></div>
-                <div class="thumb"><img src="img6.jpg" alt="Thumb 06"></div>
+            <div class="content-col">
+                <h1>Under The Seat</h1>
+                <h2>© 2024 /  Animation Installation</h2>
+                <div class="description">
+                    <p>以童年經歷為出發，呈現兒時校園裡師生、同儕之間因片面資訊所造成的誤會事件，及被掩蓋真相的不愉快、冤枉之情。</p>
+                    <p>一開始聚光在投幣機上。投幣之後，三個座位的聚光燈亮起，可以透過靠近座位看到該角色視角的動畫。</p>
+                    <p>在不同座位播放動畫，以不同角色視角觀看同一事件。不同的攝影機角度，所呈現的劇情細節、美術風格也有所不同。</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="team-section scroll-reveal">
+        <div class="wrapper">
+            <h2 class="section-title">Team & Roles</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <h3>許妤謙</h3>
+                    <h4>Art Direction / Animator</h4>
+                    <p>負責整體視覺統籌、角色設定，以及核心 2D 動畫繪製與動態設計。</p>
+                </div>
+                <div class="team-member">
+                    <h3>羅凱云</h3>
+                    <h4>Spatial Design / Installation</h4>
+                    <p>主導實體裝置設計、空間動線規劃，以及硬體材質的選用與搭建。</p>
+                </div>
+                <div class="team-member">
+                    <h3>靳浩雅</h3>
+                    <h4>Storyboarding / Project Manager</h4>
+                    <p>負責腳本企劃撰寫、分鏡邏輯梳理，以及整體專案的時程進度控管。</p>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="content-col">
-            <h1>Under The Seat</h1>
-            <h2>© 2024 /  Animation Installation</h2>
-            <h3>許妤謙、羅凱云、靳浩雅</h3>
-
-            <div class="description">
-                <p>以童年經歷為出發，呈現兒時校園裡師生、同儕之間因片面資訊所造成的誤會事件，及被掩蓋真相的不愉快、冤枉之情。</p>
-                <p>一開始聚光在投幣機上。投幣之後，三個座位的聚光燈亮起，可以透過靠近座位看到該角色視角的動畫。</p>
-                <p>在不同座位播放動畫，以不同角色視角觀看同一事件。不同的攝影機角度，所呈現的劇情細節、美術風格也有所不同。</p>
+    <section class="bts-section">
+        <div class="wrapper">
+            
+            <div class="bts-block scroll-reveal">
+                <div class="bts-text">
+                    <h3>實體裝置的誕生</h3>
+                    <p>為了讓觀展者能真正沉浸在「被掩蓋的真相」中，我們決定打破傳統平面的觀影方式。從草圖設計到木作切割，團隊親手打造了帶有童年記憶符號的座位區與投幣機。</p>
+                    <p>我們在座位下方巧妙隱藏了投影設備與感測器，確保硬體與動畫的結合能夠無縫觸發，創造出最具張力的互動體驗。</p>
+                </div>
+                <div class="bts-image">
+                    <img src="https://picsum.photos/1000/600?random=21" alt="實體裝置製作過程">
+                </div>
             </div>
 
-            <a href="index.html" class="back-home">← Back to Home</a>
-        </div>
+            <div class="bts-block reverse scroll-reveal">
+                <div class="bts-text">
+                    <h3>多重視角的動畫刻畫</h3>
+                    <p>在動畫製作階段，最大的挑戰在於如何用「三個不同的視角」去重構同一個事件。我們針對每個角色的心理狀態，刻意採用了不同的色調與線條風格。</p>
+                    <p>從最初的草稿分鏡，到逐格動畫的繪製，我們不斷測試光影的表現，確保當觀眾靠近座位時，視覺上能帶來最強烈的情感共鳴。</p>
+                </div>
+                <div class="bts-image">
+                    <img src="https://picsum.photos/1000/600?random=22" alt="動畫製作過程">
+                </div>
+            </div>
 
-    </div>
+        </div>
+    </section>
+
+    <a href="index.html" class="back-home">Back to Home</a>
 
     <script>
+        // 1. 幻燈片控制 (跟之前一樣)
         const mainImages = document.querySelectorAll('.main-img');
         const thumbs = document.querySelectorAll('.thumb');
         const prevBtn = document.getElementById('prevBtn');
@@ -244,37 +352,37 @@
         function showSlide(index) {
             mainImages.forEach(img => img.classList.remove('active'));
             thumbs.forEach(thumb => thumb.classList.remove('active'));
-
-            if (index >= mainImages.length) {
-                currentIndex = 0; 
-            } else if (index < 0) {
-                currentIndex = mainImages.length - 1; 
-            } else {
-                currentIndex = index;
-            }
-
+            if (index >= mainImages.length) currentIndex = 0; 
+            else if (index < 0) currentIndex = mainImages.length - 1; 
+            else currentIndex = index;
             mainImages[currentIndex].classList.add('active');
             thumbs[currentIndex].classList.add('active');
         }
 
-        prevBtn.addEventListener('click', () => {
-            showSlide(currentIndex - 1);
-        });
-
-        nextBtn.addEventListener('click', () => {
-            showSlide(currentIndex + 1);
-        });
-
+        prevBtn.addEventListener('click', () => showSlide(currentIndex - 1));
+        nextBtn.addEventListener('click', () => showSlide(currentIndex + 1));
         thumbs.forEach((thumb, index) => {
-            thumb.addEventListener('click', () => {
-                showSlide(index);
-            });
+            thumb.addEventListener('click', () => showSlide(index));
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') showSlide(currentIndex - 1);
-            if (e.key === 'ArrowRight') showSlide(currentIndex + 1);
+        // 2. 滾動浮現動畫控制 (Intersection Observer)
+        // 這個 JS 會監視帶有 .scroll-reveal 的區塊，當它滑進畫面時加上 active
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // 播過一次後就解除監聽，節省效能
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15 // 當區塊出現 15% 的時候觸發動畫
         });
+
+        revealElements.forEach(el => revealObserver.observe(el));
     </script>
 </body>
 </html>
