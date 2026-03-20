@@ -16,24 +16,21 @@
         }
 
         /* =========================================
-           新增：開場打字機動畫區 (Intro Screen)
+           升級版：質感打字機高亮選單 (Intro Screen)
            ========================================= */
         #intro-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
+            top: 0; left: 0; width: 100%; height: 100vh;
             background-color: #050505; /* 極致黑背景 */
-            z-index: 9999; /* 確保在最上層 */
+            z-index: 9999; 
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 布幕上滑的絲滑動畫 */
-            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+            /* 修改：布幕上滑動畫時間縮短為 0.8s，變得更輕快 */
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
-        /* 當加上 slide-up 類別時，整頁往上移 100% 離開畫面 */
+        /* 當加上 slide-up 類別時 */
         #intro-screen.slide-up {
             transform: translateY(-100%);
         }
@@ -41,51 +38,42 @@
         .intro-container {
             position: relative;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            justify-content: center;
+            align-items: center;
+            /* 初始隱藏，等待 JS 顯示 */
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* 用來把寬度撐開的隱形文字，確保矩形知道要長多寬 */
-        .intro-text-hidden {
+        /* --- 核心修改：文字與顏色相反的矩形結合 --- */
+        .typing-box {
+            display: inline-block;
+            /* 顏色相反：白色背景，黑色文字 */
+            background-color: #fff;
+            color: #000;
+            font-family: monospace; /* 打字機專用等寬字 */
             font-size: 1.8rem;
-            font-family: monospace;
             letter-spacing: 2px;
-            visibility: hidden;
-            height: 0;
-        }
-
-        /* 實際顯示的打字機文字 */
-        .intro-text {
-            font-size: 1.8rem;
-            font-family: monospace;
-            color: #fff;
-            letter-spacing: 2px;
+            text-transform: uppercase;
             white-space: nowrap;
+            /* 矩形的邊距與圓角 */
+            padding: 15px 30px;
+            border-radius: 8px; /* 輕微圓角增加精緻感 */
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1); /* 微微發光效果 */
         }
 
-        /* 打字機游標閃爍效果 */
-        .intro-text::after {
+        /* 打字機游標 (顏色也相反為黑色) */
+        .typing-box::after {
             content: '|';
+            color: #000;
             animation: blink 0.8s step-end infinite;
+            font-weight: 300;
         }
 
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        /* 下方的伸展矩形 */
-        .intro-rect {
-            width: 0; /* 初始寬度為 0 */
-            height: 3px;
-            background-color: #d0d0d0;
-            margin-top: 10px;
-            /* 矩形伸展的動畫速度 */
-            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
+        @keyframes blink { 50% { opacity: 0; } }
 
         /* =========================================
-           主頁面：標題與進場動畫區
+           主頁面：標題與轉盤 (維持原樣)
            ========================================= */
         .hero {
             text-align: center;
@@ -95,46 +83,32 @@
         }
 
         .hero h1 {
-            font-size: 4.5rem;
-            font-weight: 800;
-            color: #b0b0b0; 
-            margin: 0;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            opacity: 0;
-            transform: translateY(20px);
+            font-size: 4.5rem; font-weight: 800; color: #b0b0b0; 
+            margin: 0; letter-spacing: 5px; text-transform: uppercase;
+            opacity: 0; transform: translateY(20px);
         }
 
         .hero h2 {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: #555; 
-            letter-spacing: 10px;
-            margin-top: 5px;
-            text-transform: uppercase;
-            opacity: 0;
-            transform: translateY(20px);
+            font-size: 1.2rem; font-weight: 400; color: #555; 
+            letter-spacing: 10px; margin-top: 5px; text-transform: uppercase;
+            opacity: 0; transform: translateY(20px);
         }
 
-        /* 只有當 body 加上 start-anim 類別時，主標題才開始浮現 (配合布幕拉開的時間) */
+        /* 告訴主畫面：可以開始播放你的標題進場動畫了！ */
         body.start-anim .hero h1 {
-            animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            animation: textFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
         }
         body.start-anim .hero h2 {
-            animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+            animation: textFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
         }
 
         @keyframes textFadeInUp {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- 轉盤與卡片區 --- */
         .wheel-container {
-            position: relative;
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative; flex-grow: 1; display: flex;
+            justify-content: center; align-items: center;
         }
 
         .card {
@@ -166,7 +140,6 @@
             line-height: 1.3;
         }
 
-        /* --- 漢堡按鈕與全螢幕選單區 --- */
         .menu-toggle {
             position: fixed; top: 40px; right: 50px; width: 40px; height: 30px; z-index: 999; 
             cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;
@@ -208,7 +181,7 @@
 
         /* 手機版適配 */
         @media (max-width: 768px) {
-            .intro-text { font-size: 1.2rem; }
+            .typing-box { font-size: 1.2rem; padding: 10px 20px; } /* 手機上縮小方塊 */
             .hero h1 { font-size: 2.8rem; }
             .hero h2 { font-size: 0.9rem; }
             .card { width: 300px; height: 300px; } 
@@ -219,10 +192,8 @@
 <body>
 
     <div id="intro-screen">
-        <div class="intro-container">
-            <div class="intro-text-hidden">Hi！here's my portfolio：）</div>
-            <div class="intro-text" id="typing-text"></div>
-            <div class="intro-rect" id="intro-rect"></div>
+        <div class="intro-container" id="typing-container">
+            <div class="typing-box" id="typing-text"></div>
         </div>
     </div>
 
@@ -280,43 +251,43 @@
 
     <script>
         // =========================================
-        // 新增：開場動畫邏輯
+        // 核心修改：大幅縮短時間的打字機邏輯
         // =========================================
         window.addEventListener('load', () => {
-            const introRect = document.getElementById('intro-rect');
+            const typingContainer = document.getElementById('typing-container');
             const typingText = document.getElementById('typing-text');
             const introScreen = document.getElementById('intro-screen');
             const textString = "Hi！here's my portfolio：）";
             let i = 0;
 
-            // 步驟 1：網頁載入後，下方的矩形先向右伸展滿版 (等待 0.3 秒後啟動)
+            // 步驟 1：網頁載入後，立刻浮現打字機選框 (延遲縮短為 100ms)
             setTimeout(() => {
-                introRect.style.width = '100%';
-            }, 300);
+                typingContainer.style.opacity = '1';
+            }, 100);
 
-            // 步驟 2：矩形伸展完畢後，啟動打字機動畫 (等待 1.1 秒後啟動)
+            // 步驟 2：緊接著啟動打字機動畫 (延遲縮短為 300ms)
             setTimeout(() => {
                 function typeWriter() {
                     if (i < textString.length) {
                         typingText.innerHTML = textString.substring(0, i + 1);
                         i++;
-                        setTimeout(typeWriter, 80); // 打字速度，越小越快
+                        // 修改：打字速度變快為 50ms (原本是 80ms)
+                        setTimeout(typeWriter, 50); 
                     } else {
-                        // 步驟 3：打完字後，停頓 1.2 秒，然後將黑色布幕整頁往上拉
+                        // 步驟 3：打完字後，只停頓 0.5 秒 (原本是 1.2s)，然後布幕上滑
                         setTimeout(() => {
                             introScreen.classList.add('slide-up');
-                            
-                            // 同時，告訴主畫面：可以開始播放你的標題進場動畫了！
+                            // 通知主畫面播放動畫
                             document.body.classList.add('start-anim');
-                        }, 1200);
+                        }, 500);
                     }
                 }
                 typeWriter();
-            }, 1100);
+            }, 300);
         });
 
 
-        // --- 原有的選單與轉盤控制 ---
+        // --- 原有的控制 (維持原樣) ---
         const menuToggle = document.getElementById('menuToggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
@@ -363,7 +334,6 @@
 
         updateWheel();
 
-        // 電腦版滾輪
         window.addEventListener('wheel', (e) => {
             if (isScrolling || menuOverlay.classList.contains('active')) return;
             if (e.deltaY > 0) activeIndex = (activeIndex + 1) % totalCards;
@@ -373,7 +343,6 @@
             setTimeout(() => { isScrolling = false; }, 300); 
         });
 
-        // 手機版滑動
         let touchStartX = 0, touchStartY = 0;
         window.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
