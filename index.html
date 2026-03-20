@@ -15,7 +15,78 @@
             flex-direction: column;
         }
 
-        /* --- 標題與進場動畫區 --- */
+        /* =========================================
+           新增：開場打字機動畫區 (Intro Screen)
+           ========================================= */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #050505; /* 極致黑背景 */
+            z-index: 9999; /* 確保在最上層 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 布幕上滑的絲滑動畫 */
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        /* 當加上 slide-up 類別時，整頁往上移 100% 離開畫面 */
+        #intro-screen.slide-up {
+            transform: translateY(-100%);
+        }
+
+        .intro-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* 用來把寬度撐開的隱形文字，確保矩形知道要長多寬 */
+        .intro-text-hidden {
+            font-size: 1.8rem;
+            font-family: monospace;
+            letter-spacing: 2px;
+            visibility: hidden;
+            height: 0;
+        }
+
+        /* 實際顯示的打字機文字 */
+        .intro-text {
+            font-size: 1.8rem;
+            font-family: monospace;
+            color: #fff;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        /* 打字機游標閃爍效果 */
+        .intro-text::after {
+            content: '|';
+            animation: blink 0.8s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* 下方的伸展矩形 */
+        .intro-rect {
+            width: 0; /* 初始寬度為 0 */
+            height: 3px;
+            background-color: #d0d0d0;
+            margin-top: 10px;
+            /* 矩形伸展的動畫速度 */
+            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+
+        /* =========================================
+           主頁面：標題與進場動畫區
+           ========================================= */
         .hero {
             text-align: center;
             margin-top: 8vh;
@@ -32,7 +103,6 @@
             text-transform: uppercase;
             opacity: 0;
             transform: translateY(20px);
-            animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
         }
 
         .hero h2 {
@@ -44,6 +114,13 @@
             text-transform: uppercase;
             opacity: 0;
             transform: translateY(20px);
+        }
+
+        /* 只有當 body 加上 start-anim 類別時，主標題才開始浮現 (配合布幕拉開的時間) */
+        body.start-anim .hero h1 {
+            animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+        body.start-anim .hero h2 {
             animation: textFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
         }
 
@@ -61,68 +138,38 @@
         }
 
         .card {
-            position: absolute;
-            width: 380px;  
-            height: 380px; 
-            border-radius: 20px;
-            overflow: hidden;
+            position: absolute; width: 380px; height: 380px; 
+            border-radius: 20px; overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: blur(15px) brightness(0.4);
-            transform: scale(1.15);
+            width: 100%; height: 100%; object-fit: cover;
+            filter: blur(15px) brightness(0.4); transform: scale(1.15);
             transition: all 0.5s ease;
         }
 
-        .card.active img {
-            filter: blur(0) brightness(1);
-            transform: scale(1);
-        }
+        .card.active img { filter: blur(0) brightness(1); transform: scale(1); }
+        .card.active:hover img { transform: scale(1.05); }
 
-        .card.active:hover img {
-            transform: scale(1.05);
-        }
-
-        /* 數字排版 (左上角) */
         .card-number {
-            position: absolute;
-            top: 20px;
-            left: 25px;
-            font-size: 1.8rem; 
-            font-weight: 700;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0;
-            z-index: 10;
-            text-shadow: 1px 2px 10px rgba(0,0,0,0.8);
+            position: absolute; top: 20px; left: 25px; font-size: 1.8rem; 
+            font-weight: 700; color: rgba(255, 255, 255, 0.9); margin: 0;
+            z-index: 10; text-shadow: 1px 2px 10px rgba(0,0,0,0.8);
         }
 
-        /* 作品名稱排版 (左下角) */
         .card-name {
-            position: absolute;
-            bottom: 25px;
-            left: 25px;
-            right: 25px; 
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.95);
-            margin: 0;
-            z-index: 10;
-            text-shadow: 2px 4px 15px rgba(0,0,0,0.9); 
+            position: absolute; bottom: 25px; left: 25px; right: 25px; 
+            font-size: 1.4rem; font-weight: 800; color: rgba(255, 255, 255, 0.95);
+            margin: 0; z-index: 10; text-shadow: 2px 4px 15px rgba(0,0,0,0.9); 
             line-height: 1.3;
         }
 
         /* --- 漢堡按鈕與全螢幕選單區 --- */
         .menu-toggle {
-            position: fixed; top: 40px; right: 50px;
-            width: 40px; height: 30px; z-index: 999; 
-            cursor: pointer; display: flex;
-            flex-direction: column; justify-content: space-between;
+            position: fixed; top: 40px; right: 50px; width: 40px; height: 30px; z-index: 999; 
+            cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;
         }
 
         .menu-toggle span {
@@ -146,7 +193,6 @@
 
         .menu-links { list-style: none; padding: 0; text-align: center; }
         .menu-links li { margin: 30px 0; overflow: hidden; }
-        
         .menu-links a {
             display: inline-block; text-decoration: none; color: #555;
             font-size: 3.5rem; font-weight: 800; text-transform: uppercase;
@@ -160,17 +206,26 @@
         .menu-overlay.active .menu-links li:nth-child(4) a { transform: translateY(0); transition-delay: 0.4s; }
         .menu-links a:hover { color: #fff; }
 
-        /* --- 手機版適配 (新增) --- */
+        /* 手機版適配 */
         @media (max-width: 768px) {
+            .intro-text { font-size: 1.2rem; }
             .hero h1 { font-size: 2.8rem; }
             .hero h2 { font-size: 0.9rem; }
-            .card { width: 300px; height: 300px; } /* 手機上稍微縮小卡片 */
-            .menu-toggle { top: 30px; right: 30px; } /* 選單按鈕往內縮一點 */
+            .card { width: 300px; height: 300px; } 
+            .menu-toggle { top: 30px; right: 30px; } 
         }
-
     </style>
 </head>
 <body>
+
+    <div id="intro-screen">
+        <div class="intro-container">
+            <div class="intro-text-hidden">Hi！here's my portfolio：）</div>
+            <div class="intro-text" id="typing-text"></div>
+            <div class="intro-rect" id="intro-rect"></div>
+        </div>
+    </div>
+
 
     <div class="menu-toggle" id="menuToggle">
         <span></span><span></span><span></span>
@@ -224,7 +279,44 @@
     </div>
 
     <script>
-        // --- 選單控制 ---
+        // =========================================
+        // 新增：開場動畫邏輯
+        // =========================================
+        window.addEventListener('load', () => {
+            const introRect = document.getElementById('intro-rect');
+            const typingText = document.getElementById('typing-text');
+            const introScreen = document.getElementById('intro-screen');
+            const textString = "Hi！here's my portfolio：）";
+            let i = 0;
+
+            // 步驟 1：網頁載入後，下方的矩形先向右伸展滿版 (等待 0.3 秒後啟動)
+            setTimeout(() => {
+                introRect.style.width = '100%';
+            }, 300);
+
+            // 步驟 2：矩形伸展完畢後，啟動打字機動畫 (等待 1.1 秒後啟動)
+            setTimeout(() => {
+                function typeWriter() {
+                    if (i < textString.length) {
+                        typingText.innerHTML = textString.substring(0, i + 1);
+                        i++;
+                        setTimeout(typeWriter, 80); // 打字速度，越小越快
+                    } else {
+                        // 步驟 3：打完字後，停頓 1.2 秒，然後將黑色布幕整頁往上拉
+                        setTimeout(() => {
+                            introScreen.classList.add('slide-up');
+                            
+                            // 同時，告訴主畫面：可以開始播放你的標題進場動畫了！
+                            document.body.classList.add('start-anim');
+                        }, 1200);
+                    }
+                }
+                typeWriter();
+            }, 1100);
+        });
+
+
+        // --- 原有的選單與轉盤控制 ---
         const menuToggle = document.getElementById('menuToggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
@@ -233,7 +325,6 @@
             menuOverlay.classList.toggle('active');
         });
 
-        // --- 轉盤控制 ---
         const cards = document.querySelectorAll('.card');
         const totalCards = cards.length;
         let activeIndex = 0; 
@@ -242,12 +333,8 @@
         function updateWheel() {
             cards.forEach((card, index) => {
                 let diff = index - activeIndex;
-
-                if (diff > Math.floor(totalCards / 2)) {
-                    diff -= totalCards;
-                } else if (diff < -Math.floor(totalCards / 2)) {
-                    diff += totalCards;
-                }
+                if (diff > Math.floor(totalCards / 2)) diff -= totalCards;
+                else if (diff < -Math.floor(totalCards / 2)) diff += totalCards;
 
                 let translateX = diff * 240; 
                 let translateY = Math.abs(diff) * 40; 
@@ -276,59 +363,44 @@
 
         updateWheel();
 
-        // 監聽電腦版滑鼠滾輪
+        // 電腦版滾輪
         window.addEventListener('wheel', (e) => {
             if (isScrolling || menuOverlay.classList.contains('active')) return;
-
-            if (e.deltaY > 0) {
-                activeIndex = (activeIndex + 1) % totalCards;
-            } else {
-                activeIndex = (activeIndex - 1 + totalCards) % totalCards;
-            }
-
+            if (e.deltaY > 0) activeIndex = (activeIndex + 1) % totalCards;
+            else activeIndex = (activeIndex - 1 + totalCards) % totalCards;
             updateWheel();
             isScrolling = true;
             setTimeout(() => { isScrolling = false; }, 300); 
         });
 
-        // =========================================
-        // 新增：手機版手指滑動偵測 (Swipe Support)
-        // =========================================
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        // 1. 手指放上去的瞬間，記錄座標
+        // 手機版滑動
+        let touchStartX = 0, touchStartY = 0;
         window.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
         });
 
-        // 2. 手指離開的瞬間，計算滑動方向
         window.addEventListener('touchend', (e) => {
             if (isScrolling || menuOverlay.classList.contains('active')) return;
+            let touchEndX = e.changedTouches[0].screenX, touchEndY = e.changedTouches[0].screenY;
+            let xDiff = touchStartX - touchEndX, yDiff = touchStartY - touchEndY;
 
-            let touchEndX = e.changedTouches[0].screenX;
-            let touchEndY = e.changedTouches[0].screenY;
-
-            let xDiff = touchStartX - touchEndX;
-            let yDiff = touchStartY - touchEndY;
-
-            // 判斷滑動距離是否足夠大 (避免不小心碰到就翻頁)
             if (Math.abs(xDiff) > 50 || Math.abs(yDiff) > 50) {
-                // 如果是左右滑動 (X軸變化大於Y軸) 或是上下滑動，都支援切換
                 if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                    if (xDiff > 0) activeIndex = (activeIndex + 1) % totalCards; // 往左滑 -> 下一張
-                    else activeIndex = (activeIndex - 1 + totalCards) % totalCards; // 往右滑 -> 上一張
+                    if (xDiff > 0) activeIndex = (activeIndex + 1) % totalCards; 
+                    else activeIndex = (activeIndex - 1 + totalCards) % totalCards; 
                 } else {
-                    if (yDiff > 0) activeIndex = (activeIndex + 1) % totalCards; // 往上滑 -> 下一張
-                    else activeIndex = (activeIndex - 1 + totalCards) % totalCards; // 往下滑 -> 上一張
+                    if (yDiff > 0) activeIndex = (activeIndex + 1) % totalCards; 
+                    else activeIndex = (activeIndex - 1 + totalCards) % totalCards; 
                 }
-                
                 updateWheel();
                 isScrolling = true;
                 setTimeout(() => { isScrolling = false; }, 300); 
             }
         });
+    </script>
+</body>
+</html>
 
     </script>
 </body>
