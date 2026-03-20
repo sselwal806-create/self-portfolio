@@ -102,18 +102,18 @@
             text-shadow: 1px 2px 10px rgba(0,0,0,0.8);
         }
 
-        /* 新增：作品名稱排版 (左下角) */
+        /* 作品名稱排版 (左下角) */
         .card-name {
             position: absolute;
             bottom: 25px;
             left: 25px;
-            right: 25px; /* 限制寬度避免超出邊界 */
+            right: 25px; 
             font-size: 1.4rem;
             font-weight: 800;
             color: rgba(255, 255, 255, 0.95);
             margin: 0;
             z-index: 10;
-            text-shadow: 2px 4px 15px rgba(0,0,0,0.9); /* 加深陰影，確保在亮色圖片上也清晰可見 */
+            text-shadow: 2px 4px 15px rgba(0,0,0,0.9); 
             line-height: 1.3;
         }
 
@@ -160,6 +160,14 @@
         .menu-overlay.active .menu-links li:nth-child(4) a { transform: translateY(0); transition-delay: 0.4s; }
         .menu-links a:hover { color: #fff; }
 
+        /* --- 手機版適配 (新增) --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .hero h2 { font-size: 0.9rem; }
+            .card { width: 300px; height: 300px; } /* 手機上稍微縮小卡片 */
+            .menu-toggle { top: 30px; right: 30px; } /* 選單按鈕往內縮一點 */
+        }
+
     </style>
 </head>
 <body>
@@ -171,7 +179,7 @@
     <div class="menu-overlay" id="menuOverlay">
         <ul class="menu-links">
             <li><a href="index.html">Home</a></li>
-            <li><a href="project1.html">Works</a></li> 
+            <li><a href="works.html">Works</a></li> 
             <li><a href="about.html">About</a></li>   
             <li><a href="mailto:your-email@example.com">Contact</a></li>
         </ul>
@@ -183,45 +191,40 @@
     </div>
 
     <div class="wheel-container">
-        
         <a href="project1.html" class="card">
             <h3 class="card-number">#1</h3>
             <h4 class="card-name">Under The Seat</h4>
             <img src="undertheseatheadtitle.jpg" alt="Under The Seat">
         </a>
-
         <a href="project2.html" class="card">
             <h3 class="card-number">#2</h3>
             <h4 class="card-name">幽靈之城</h4>
             <img src="https://picsum.photos/600/600?random=2" alt="幽靈之城">
         </a>
-
         <a href="project3.html" class="card">
             <h3 class="card-number">#3</h3>
             <h4 class="card-name">馬賽克，你的臉上</h4>
             <img src="https://picsum.photos/600/600?random=3" alt="馬賽克，你的臉上">
         </a>
-
         <a href="project4.html" class="card">
             <h3 class="card-number">#4</h3>
             <h4 class="card-name">Psyexplodie混亂轉播</h4>
             <img src="https://picsum.photos/600/600?random=4" alt="Psyexplodie混亂轉播">
         </a>
-
         <a href="project5.html" class="card">
             <h3 class="card-number">#5</h3>
             <h4 class="card-name">即將公開 (TBA)</h4>
             <img src="https://picsum.photos/600/600?random=5" alt="保留作品 5">
         </a>
-
         <a href="project6.html" class="card">
             <h3 class="card-number">#6</h3>
             <h4 class="card-name">即將公開 (TBA)</h4>
             <img src="https://picsum.photos/600/600?random=6" alt="保留作品 6">
         </a>
-
     </div>
+
     <script>
+        // --- 選單控制 ---
         const menuToggle = document.getElementById('menuToggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
@@ -230,7 +233,7 @@
             menuOverlay.classList.toggle('active');
         });
 
-        // 轉盤控制
+        // --- 轉盤控制 ---
         const cards = document.querySelectorAll('.card');
         const totalCards = cards.length;
         let activeIndex = 0; 
@@ -273,6 +276,7 @@
 
         updateWheel();
 
+        // 監聽電腦版滑鼠滾輪
         window.addEventListener('wheel', (e) => {
             if (isScrolling || menuOverlay.classList.contains('active')) return;
 
@@ -286,6 +290,46 @@
             isScrolling = true;
             setTimeout(() => { isScrolling = false; }, 300); 
         });
+
+        // =========================================
+        // 新增：手機版手指滑動偵測 (Swipe Support)
+        // =========================================
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // 1. 手指放上去的瞬間，記錄座標
+        window.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        });
+
+        // 2. 手指離開的瞬間，計算滑動方向
+        window.addEventListener('touchend', (e) => {
+            if (isScrolling || menuOverlay.classList.contains('active')) return;
+
+            let touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+
+            let xDiff = touchStartX - touchEndX;
+            let yDiff = touchStartY - touchEndY;
+
+            // 判斷滑動距離是否足夠大 (避免不小心碰到就翻頁)
+            if (Math.abs(xDiff) > 50 || Math.abs(yDiff) > 50) {
+                // 如果是左右滑動 (X軸變化大於Y軸) 或是上下滑動，都支援切換
+                if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                    if (xDiff > 0) activeIndex = (activeIndex + 1) % totalCards; // 往左滑 -> 下一張
+                    else activeIndex = (activeIndex - 1 + totalCards) % totalCards; // 往右滑 -> 上一張
+                } else {
+                    if (yDiff > 0) activeIndex = (activeIndex + 1) % totalCards; // 往上滑 -> 下一張
+                    else activeIndex = (activeIndex - 1 + totalCards) % totalCards; // 往下滑 -> 上一張
+                }
+                
+                updateWheel();
+                isScrolling = true;
+                setTimeout(() => { isScrolling = false; }, 300); 
+            }
+        });
+
     </script>
 </body>
 </html>
