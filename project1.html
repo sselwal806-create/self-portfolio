@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Under The Seat - Hsu YU CHIEN Portfolio</title>
     <style>
-        /* 基礎設定 & 字體 (跟主頁保持一致) */
+        /* 基礎設定 & 字體 */
         body {
             margin: 0;
-            background-color: #0f0f0f; /* 極致黑 */
-            color: #d0d0d0; /* 質感淺灰字 */
+            background-color: #0f0f0f; 
+            color: #d0d0d0; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow-x: hidden;
             display: flex;
@@ -18,37 +18,35 @@
             min-height: 100vh;
         }
 
-        /* 頁面主要容器 (左圖右文) */
         .container {
             display: flex;
-            gap: 6vw; /* 兩欄中間的呼吸空間 */
-            max-width: 1400px; /* 限制最大寬度，避免在大螢幕上太散 */
+            gap: 6vw; 
+            max-width: 1400px; 
             width: 90%;
             padding: 80px 0;
             box-sizing: border-box;
-            align-items: flex-start; /* 讓兩欄從頂部對齊 */
+            align-items: flex-start; 
         }
 
         /* =========================================
            1. 幻燈片播放器 (左側)
            ========================================= */
         .slideshow-col {
-            flex: 1.4; /* 左側佔比稍微大一點 */
+            flex: 1.4; 
             position: relative;
             
-            /* --- 動畫設定：淡入並向上浮現 --- */
+            /* --- 修改：讓動畫上升更慢、距離更長 --- */
             opacity: 0;
-            transform: translateY(40px);
-            /* 名稱、持續時間、絲滑貝茲曲線、延遲時間、停在最終狀態 */
-            animation: elegantFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+            transform: translateY(60px); /* 從更低的地方升起 */
+            /* 動畫時間從 1.2s 改為 1.8s，變得更緩慢絲滑 */
+            animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
         }
 
-        /* 2. 主圖區域 */
         .main-img-area {
             position: relative;
             width: 100%;
             height: 0;
-            padding-bottom: 75%; /* 4:3 比例，可依據你的圖片調整 */
+            padding-bottom: 75%; 
             background-color: #1a1a1a;
             border-radius: 12px;
             overflow: hidden;
@@ -58,16 +56,15 @@
         .main-img-area img {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; /* 讓圖片填滿且不變形 */
-            opacity: 0; /* 預設隱藏，由 JS 控制顯示 */
-            transition: opacity 0.6s ease; /* 換圖時的淡入淡出 */
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 0.6s ease; 
         }
 
         .main-img-area img.active {
-            opacity: 1; /* 當前顯示的圖片 */
+            opacity: 1; 
         }
 
-        /* 3. 左右按鈕箭頭 */
         .arrow {
             position: absolute;
             top: 50%;
@@ -88,10 +85,9 @@
         .arrow-left { left: 20px; }
         .arrow-right { right: 20px; }
 
-        /* 4. 小圖點選區域 (Thumbs) */
         .thumbs-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* 6張小圖排成一橫排 */
+            grid-template-columns: repeat(6, 1fr); 
             gap: 15px;
             margin-top: 20px;
         }
@@ -99,7 +95,7 @@
         .thumb {
             width: 100%;
             height: 0;
-            padding-bottom: 75%; /* 保持 4:3 比例跟主圖一致 */
+            padding-bottom: 75%; 
             border-radius: 6px;
             overflow: hidden;
             background-color: #1a1a1a;
@@ -111,61 +107,61 @@
 
         .thumb img {
             width: 100%; height: 100%; object-fit: cover;
-            filter: brightness(0.5); /* 未選中時變暗 */
+            filter: brightness(0.5); 
             transition: filter 0.3s ease;
         }
 
-        /* 選中時的小圖樣式 */
-        .thumb.active {
-            border-color: #555; /* 加一個灰色邊框 */
-        }
-        .thumb.active img, .thumb:hover img {
-            filter: brightness(1); /* 變亮 */
-        }
+        .thumb.active { border-color: #555; }
+        .thumb.active img, .thumb:hover img { filter: brightness(1); }
 
         /* =========================================
            2. 作品說明 (右側)
            ========================================= */
         .content-col {
-            flex: 1; /* 右側佔比稍微小一點 */
-            position: sticky; /* 讓文字在滑動時固定，增加高級感 */
+            flex: 1; 
+            position: sticky; 
             top: 80px;
             
-            /* --- 動畫設定：比左側慢 0.2 秒浮現，創造層次感 --- */
+            /* --- 修改：右側文字也變慢，並且稍微晚一點點才出發 --- */
             opacity: 0;
-            transform: translateY(40px);
-            animation: elegantFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+            transform: translateY(60px);
+            animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
         }
 
-        /* 主標題：Under The Seat */
         .content-col h1 {
             font-size: 3.5rem;
             font-weight: 800;
-            color: #b0b0b0; /* 質感灰色大字 */
+            color: #b0b0b0; 
             margin: 0;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
 
-        /* 副標題或年份 */
         .content-col h2 {
             font-size: 1rem;
             font-weight: 400;
             color: #666;
-            margin: 5px 0 40px 0;
+            margin: 5px 0 5px 0; /* 調整了間距讓 h2, h3 更緊湊 */
             letter-spacing: 5px;
             text-transform: uppercase;
         }
+        
+        /* 團隊成員名字的樣式 */
+        .content-col h3 {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #888;
+            margin: 0 0 40px 0;
+            letter-spacing: 2px;
+        }
 
-        /* 論述文字排版 */
         .description p {
             font-size: 1.1rem;
-            line-height: 1.8; /* 讓行距拉開，閱讀更舒服 */
+            line-height: 1.8; 
             color: #a1a1a1;
             margin-bottom: 25px;
         }
 
-        /* 返回按鈕 (Home) */
         .back-home {
             display: inline-block;
             margin-top: 50px;
@@ -183,14 +179,10 @@
             border-bottom-color: #fff;
         }
 
-        /* =========================================
-           3. 動畫與手持裝置適配 
-           ========================================= */
         @keyframes elegantFadeInUp {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* RWD 響應式設計：在手機上改為直向排列 */
         @media (max-width: 900px) {
             .container { flex-direction: column; padding: 50px 0; }
             .slideshow-col, .content-col { flex: none; width: 100%; }
@@ -209,20 +201,20 @@
                 <button class="arrow arrow-right" id="nextBtn">&#10095;</button>
 
                 <img src="undertheseattitle.jpg" alt="Under The Seat 01" class="main-img active">
-                <img src="https://picsum.photos/1200/900?random=12" alt="Under The Seat 02" class="main-img">
-                <img src="https://picsum.photos/1200/900?random=13" alt="Under The Seat 03" class="main-img">
-                <img src="https://picsum.photos/1200/900?random=14" alt="Under The Seat 04" class="main-img">
-                <img src="https://picsum.photos/1200/900?random=15" alt="Under The Seat 05" class="main-img">
-                <img src="https://picsum.photos/1200/900?random=16" alt="Under The Seat 06" class="main-img">
+                <img src="img2.jpg" alt="Under The Seat 02" class="main-img">
+                <img src="img3.jpg" alt="Under The Seat 03" class="main-img">
+                <img src="img4.jpg" alt="Under The Seat 04" class="main-img">
+                <img src="img5.jpg" alt="Under The Seat 05" class="main-img">
+                <img src="img6.jpg" alt="Under The Seat 06" class="main-img">
             </div>
 
             <div class="thumbs-grid">
-                <div class="thumb active"><img src="https://picsum.photos/400/300?random=11" alt="Thumb 01"></div>
-                <div class="thumb"><img src="https://picsum.photos/400/300?random=12" alt="Thumb 02"></div>
-                <div class="thumb"><img src="https://picsum.photos/400/300?random=13" alt="Thumb 03"></div>
-                <div class="thumb"><img src="https://picsum.photos/400/300?random=14" alt="Thumb 04"></div>
-                <div class="thumb"><img src="https://picsum.photos/400/300?random=15" alt="Thumb 05"></div>
-                <div class="thumb"><img src="https://picsum.photos/400/300?random=16" alt="Thumb 06"></div>
+                <div class="thumb active"><img src="undertheseattitle.jpg" alt="Thumb 01"></div>
+                <div class="thumb"><img src="img2.jpg" alt="Thumb 02"></div>
+                <div class="thumb"><img src="img3.jpg" alt="Thumb 03"></div>
+                <div class="thumb"><img src="img4.jpg" alt="Thumb 04"></div>
+                <div class="thumb"><img src="img5.jpg" alt="Thumb 05"></div>
+                <div class="thumb"><img src="img6.jpg" alt="Thumb 06"></div>
             </div>
         </div>
 
@@ -234,7 +226,7 @@
             <div class="description">
                 <p>以童年經歷為出發，呈現兒時校園裡師生、同儕之間因片面資訊所造成的誤會事件，及被掩蓋真相的不愉快、冤枉之情。</p>
                 <p>一開始聚光在投幣機上。投幣之後，三個座位的聚光燈亮起，可以透過靠近座位看到該角色視角的動畫。</p>
-                <p>在不同座位播放動畫，以不同角色視角觀看同一事件。不同的攝影機角度，所呈現的劇情細節、美術風格也有所不同。。</p>
+                <p>在不同座位播放動畫，以不同角色視角觀看同一事件。不同的攝影機角度，所呈現的劇情細節、美術風格也有所不同。</p>
             </div>
 
             <a href="index.html" class="back-home">← Back to Home</a>
@@ -247,29 +239,24 @@
         const thumbs = document.querySelectorAll('.thumb');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        let currentIndex = 0; // 記錄當前顯示的是第幾張
+        let currentIndex = 0; 
 
-        // 換圖的函式
         function showSlide(index) {
-            // 先把所有的 active 狀態都拿掉
             mainImages.forEach(img => img.classList.remove('active'));
             thumbs.forEach(thumb => thumb.classList.remove('active'));
 
-            // 算出新的 index (迴圈邏輯)
             if (index >= mainImages.length) {
-                currentIndex = 0; // 超過最後一張就回到第一張
+                currentIndex = 0; 
             } else if (index < 0) {
-                currentIndex = mainImages.length - 1; // 小於第一張就去最後一張
+                currentIndex = mainImages.length - 1; 
             } else {
                 currentIndex = index;
             }
 
-            // 給對應的圖加上 active 狀態
             mainImages[currentIndex].classList.add('active');
             thumbs[currentIndex].classList.add('active');
         }
 
-        // 按鈕箭頭控制
         prevBtn.addEventListener('click', () => {
             showSlide(currentIndex - 1);
         });
@@ -278,14 +265,12 @@
             showSlide(currentIndex + 1);
         });
 
-        // 小圖點選控制 (使用 Array.from 將 NodeList 轉為陣列以使用 forEach)
         thumbs.forEach((thumb, index) => {
             thumb.addEventListener('click', () => {
                 showSlide(index);
             });
         });
 
-        // 選用：支援滑鼠滾輪或鍵盤左右鍵換圖
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') showSlide(currentIndex - 1);
             if (e.key === 'ArrowRight') showSlide(currentIndex + 1);
