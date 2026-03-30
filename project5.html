@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插畫集 - Gallery</title>
+    <style>
+        /* =========================================
+           1. 基礎設定與標題
+           ========================================= */
+        body {
+            margin: 0;
+            background-color: #0f0f0f; /* 質感黑底，最能襯托插畫色彩 */
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 50px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            margin: 0;
+            color: #e0e0e0;
+        }
+
+        .header p {
+            color: #888;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        /* =========================================
+           2. 瀑布流相簿排版 (Masonry Layout)
+           ========================================= */
+        .gallery {
+            max-width: 1400px;
+            margin: 0 auto;
+            /* 核心：利用 CSS Column 達成自動瀑布流排版 */
+            column-count: 4; /* 預設 4 個欄位 */
+            column-gap: 20px; /* 圖片之間的左右間距 */
+        }
+
+        .gallery-item {
+            /* 避免圖片被切斷在兩欄之間 */
+            break-inside: avoid;
+            margin-bottom: 20px; /* 圖片之間的上下間距 */
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            
+            /* 進場動畫 */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: elegantFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 利用 nth-child 製造進場的時間差 */
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.4s ease, filter 0.4s ease;
+        }
+
+        /* 滑鼠懸停時的微互動 */
+        .gallery-item:hover img {
+            transform: scale(1.05); /* 輕微放大 */
+            filter: brightness(1.2); /* 稍微變亮 */
+        }
+
+        /* =========================================
+           3. 點擊放大功能 (Lightbox)
+           ========================================= */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9); /* 半透明黑背景 */
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* 預設隱藏 */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        /* 顯示時的狀態 */
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .lightbox.active img {
+            transform: scale(1);
+        }
+
+        /* 關閉按鈕 (右上角 X) */
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: #fff;
+            font-size: 3rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .lightbox-close:hover {
+            color: #aaa;
+        }
+
+        @keyframes elegantFadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* =========================================
+           4. RWD 響應式設計 (適應手機與平板)
+           ========================================= */
+        @media (max-width: 1024px) {
+            .gallery { column-count: 3; } /* 平板變 3 欄 */
+        }
+        @media (max-width: 768px) {
+            .gallery { column-count: 2; } /* 小螢幕變 2 欄 */
+        }
+        @media (max-width: 480px) {
+            .gallery { column-count: 1; } /* 手機變 1 欄 */
+            .header h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>插畫集</h1>
+        <p>Illustrations & Sketches</p>
+    </div>
+
+    <div class="gallery">
+        <div class="gallery-item"><img src="https://picsum.photos/600/800?random=1" alt="插畫 1"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/400?random=2" alt="插畫 2"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/900?random=3" alt="插畫 3"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/600?random=4" alt="插畫 4"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/1000?random=5" alt="插畫 5"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/500?random=6" alt="插畫 6"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/700?random=7" alt="插畫 7"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/850?random=8" alt="插畫 8"></div>
+        <div class="gallery-item"><img src="https://picsum.photos/600/450?random=9" alt="插畫 9"></div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" id="lightboxClose">&times;</span>
+        <img src="" alt="放大顯示的插畫" id="lightboxImg">
+    </div>
+
+    <script>
+        // --- 點擊放大 (Lightbox) 邏輯 ---
+        const galleryItems = document.querySelectorAll('.gallery-item img');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        // 1. 監聽每一張圖片的點擊事件
+        galleryItems.forEach(img => {
+            img.addEventListener('click', () => {
+                // 將被點擊的圖片網址，交給放大的圖片區塊
+                lightboxImg.src = img.src;
+                // 加上 active 類別來顯示黑底與大圖
+                lightbox.classList.add('active');
+                // 隱藏原本網頁的滾動條，避免背景跟著滑動
+                document.body.style.overflow = 'hidden'; 
+            });
+        });
+
+        // 2. 點擊 X 按鈕關閉
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto'; // 恢復網頁滾動
+        });
+
+        // 3. 點擊圖片以外的黑底區域也能關閉
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>
