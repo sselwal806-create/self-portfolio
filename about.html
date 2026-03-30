@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Hsu YU CHIEN</title>
+    <style>
+        /* =========================================
+           1. 基礎設定
+           ========================================= */
+        body {
+            margin: 0;
+            background-color: #0f0f0f; /* 質感黑底 */
+            color: #d0d0d0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 滿版雙欄主要容器 */
+        .about-container {
+            display: flex;
+            min-height: 100vh; /* 確保至少佔滿整個螢幕高度 */
+            width: 100%;
+        }
+
+        /* =========================================
+           2. 左側：滿版大照片區塊
+           ========================================= */
+        .image-col {
+            flex: 1; /* 佔據一半寬度 */
+            position: relative;
+            overflow: hidden;
+            /* 讓照片區塊也有一個從底下浮現的開場動畫 */
+            opacity: 0;
+            transform: translateY(40px);
+            animation: elegantFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .image-col img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 確保照片填滿且不變形 */
+            object-position: center center;
+            /* 照片自帶非常緩慢的放大效果，增加生命力 */
+            animation: slowZoom 20s linear infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+
+        /* =========================================
+           3. 右側：文字內容區塊
+           ========================================= */
+        .text-col {
+            flex: 1; /* 佔據另一半寬度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10% 8%; /* 給予文字充足的呼吸空間 */
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* 標題排版 */
+        .text-col h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #b0b0b0;
+            margin: 0 0 10px 0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .text-col h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #666;
+            margin: 0 0 40px 0;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+
+        /* 自我介紹內文排版 */
+        .bio-text p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #a1a1a1;
+            margin-bottom: 25px;
+            max-width: 600px; /* 限制單行字數，讓閱讀更舒適 */
+        }
+
+        /* 聯絡資訊 / 社群連結 */
+        .contact-info {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #222; /* 微弱的分隔線 */
+            display: flex;
+            gap: 30px;
+        }
+
+        .contact-info a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        /* 連結懸停時的底線動畫 */
+        .contact-info a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: #fff;
+            transition: width 0.3s ease;
+        }
+        .contact-info a:hover::after {
+            width: 100%;
+        }
+
+        /* --- 文字區塊的排隊進場動畫 --- */
+        .text-col h1, .text-col h2, .bio-text p, .contact-info {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: elegantFadeInUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 利用 delay 創造時間差 */
+        .text-col h1 { animation-delay: 0.2s; }
+        .text-col h2 { animation-delay: 0.3s; }
+        .bio-text p:nth-child(1) { animation-delay: 0.4s; }
+        .bio-text p:nth-child(2) { animation-delay: 0.5s; }
+        .contact-info { animation-delay: 0.6s; }
+
+        @keyframes elegantFadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================
+           4. 返回按鈕
+           ========================================= */
+        .back-btn {
+            position: absolute;
+            top: 40px;
+            right: 50px; /* 放在右側，平衡左邊的大圖 */
+            text-decoration: none;
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            z-index: 100;
+            animation: elegantFadeInUp 1s ease 0.8s forwards;
+            opacity: 0;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        /* =========================================
+           5. RWD 響應式設計 (適應手機與平板)
+           ========================================= */
+        @media (max-width: 900px) {
+            /* 手機版改為上下排列 */
+            .about-container { flex-direction: column; }
+            .image-col { min-height: 60vh; width: 100%; }
+            .text-col { padding: 15% 8%; }
+            .text-col h1 { font-size: 2.8rem; }
+            .back-btn { top: 20px; right: 20px; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="about-container">
+        
+        <div class="image-col">
+            <img src="https://picsum.photos/1000/1500?random=50" alt="Hsu YU CHIEN Portrait">
+        </div>
+
+        <div class="text-col">
+            <a href="index.html" class="back-btn">← Back to Home</a>
+
+            <h1>Hsu YU CHIEN</h1>
+            <h2>Visual Artist & Digital Creator</h2>
+            <div class="bio-text">
+                <p>你好，我是許妤謙。專注於數位藝術、2D/3D 動畫與互動裝置設計。我喜歡將日常生活中被忽略的細節，轉化為具備強烈視覺張力的敘事空間。</p>
+                
+                <p>我的創作經常遊走於實體與虛擬之間，從「幽靈之城」的廢墟重建，到「Under The Seat」的多重視角探索，我致力於運用科技媒材（Creative Coding & Generative Art）來觸發觀眾深層的情感共鳴。目前正積極探索新媒體藝術的各種可能。</p>
+            </div>
+
+            <div class="contact-info">
+                <a href="mailto:your-email@example.com">Email</a>
+                <a href="https://instagram.com/your_id" target="_blank">Instagram</a>
+                <a href="#">Behance</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
