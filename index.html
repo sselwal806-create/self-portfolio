@@ -272,14 +272,14 @@
                         typingText.innerHTML = textString.substring(0, i + 1);
                         i++;
                         // 修改：打字速度變快為 50ms (原本是 80ms)
-                        setTimeout(typeWriter, 50); 
+                        setTimeout(typeWriter, 30); 
                     } else {
                         // 步驟 3：打完字後，只停頓 0.5 秒 (原本是 1.2s)，然後布幕上滑
                         setTimeout(() => {
                             introScreen.classList.add('slide-up');
                             // 通知主畫面播放動畫
                             document.body.classList.add('start-anim');
-                        }, 500);
+                        }, 300);
                     }
                 }
                 typeWriter();
