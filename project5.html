@@ -14,6 +14,7 @@
             color: #fff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             padding: 50px 20px;
+            position: relative; /* 確保左上角的返回鍵能正確定位 */
         }
 
         .header {
@@ -42,27 +43,23 @@
         .gallery {
             max-width: 1400px;
             margin: 0 auto;
-            /* 核心：利用 CSS Column 達成自動瀑布流排版 */
-            column-count: 4; /* 預設 4 個欄位 */
-            column-gap: 20px; /* 圖片之間的左右間距 */
+            column-count: 4; 
+            column-gap: 20px; 
         }
 
         .gallery-item {
-            /* 避免圖片被切斷在兩欄之間 */
             break-inside: avoid;
-            margin-bottom: 20px; /* 圖片之間的上下間距 */
+            margin-bottom: 20px; 
             border-radius: 12px;
             overflow: hidden;
             position: relative;
             cursor: pointer;
             
-            /* 進場動畫 */
             opacity: 0;
             transform: translateY(20px);
             animation: elegantFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* 利用 nth-child 製造進場的時間差 */
         .gallery-item:nth-child(1) { animation-delay: 0.1s; }
         .gallery-item:nth-child(2) { animation-delay: 0.2s; }
         .gallery-item:nth-child(3) { animation-delay: 0.3s; }
@@ -76,10 +73,9 @@
             transition: transform 0.4s ease, filter 0.4s ease;
         }
 
-        /* 滑鼠懸停時的微互動 */
         .gallery-item:hover img {
-            transform: scale(1.05); /* 輕微放大 */
-            filter: brightness(1.2); /* 稍微變亮 */
+            transform: scale(1.05); 
+            filter: brightness(1.2); 
         }
 
         /* =========================================
@@ -91,20 +87,18 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.9); /* 半透明黑背景 */
+            background: rgba(0, 0, 0, 0.9); 
             backdrop-filter: blur(5px);
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             
-            /* 預設隱藏 */
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
         }
 
-        /* 顯示時的狀態 */
         .lightbox.active {
             opacity: 1;
             pointer-events: auto;
@@ -123,7 +117,6 @@
             transform: scale(1);
         }
 
-        /* 關閉按鈕 (右上角 X) */
         .lightbox-close {
             position: absolute;
             top: 30px;
@@ -140,6 +133,27 @@
             color: #aaa;
         }
 
+        /* =========================================
+           4. 新增：返回首頁按鈕
+           ========================================= */
+        .back-btn {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            text-decoration: none;
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            z-index: 100;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
         @keyframes elegantFadeInUp {
             to { opacity: 1; transform: translateY(0); }
         }
@@ -149,21 +163,25 @@
         }
 
         /* =========================================
-           4. RWD 響應式設計 (適應手機與平板)
+           5. RWD 響應式設計 (適應手機與平板)
            ========================================= */
         @media (max-width: 1024px) {
-            .gallery { column-count: 3; } /* 平板變 3 欄 */
+            .gallery { column-count: 3; } 
         }
         @media (max-width: 768px) {
-            .gallery { column-count: 2; } /* 小螢幕變 2 欄 */
+            .gallery { column-count: 2; } 
+            .back-btn { top: 20px; left: 20px; font-size: 0.8rem; } /* 手機版返回鍵縮小並靠邊 */
+            .header { margin-top: 40px; } /* 手機版標題往下挪，避免跟返回鍵打架 */
         }
         @media (max-width: 480px) {
-            .gallery { column-count: 1; } /* 手機變 1 欄 */
+            .gallery { column-count: 1; } 
             .header h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
+
+    <a href="index.html" class="back-btn">← Back to Home</a>
 
     <div class="header">
         <h1>插畫集</h1>
@@ -182,7 +200,6 @@
         <div class="gallery-item"><img src="Illustration09.PNG" alt="插畫 9"></div>
         <div class="gallery-item"><img src="Illustration10.PNG" alt="插畫 10"></div>
         <div class="gallery-item"><img src="Illustration11.PNG" alt="插畫 11"></div>
-
     </div>
 
     <div class="lightbox" id="lightbox">
@@ -191,31 +208,24 @@
     </div>
 
     <script>
-        // --- 點擊放大 (Lightbox) 邏輯 ---
         const galleryItems = document.querySelectorAll('.gallery-item img');
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxClose = document.getElementById('lightboxClose');
 
-        // 1. 監聽每一張圖片的點擊事件
         galleryItems.forEach(img => {
             img.addEventListener('click', () => {
-                // 將被點擊的圖片網址，交給放大的圖片區塊
                 lightboxImg.src = img.src;
-                // 加上 active 類別來顯示黑底與大圖
                 lightbox.classList.add('active');
-                // 隱藏原本網頁的滾動條，避免背景跟著滑動
                 document.body.style.overflow = 'hidden'; 
             });
         });
 
-        // 2. 點擊 X 按鈕關閉
         lightboxClose.addEventListener('click', () => {
             lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto'; // 恢復網頁滾動
+            document.body.style.overflow = 'auto'; 
         });
 
-        // 3. 點擊圖片以外的黑底區域也能關閉
         lightbox.addEventListener('click', (e) => {
             if (e.target === lightbox) {
                 lightbox.classList.remove('active');
