@@ -14,23 +14,19 @@
             color: #d0d0d0; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow-x: hidden;
-            /* 移除原本的 flex center，讓網頁可以正常往下滾動 */
         }
 
-        /* 讓內容維持在中央並限制最大寬度 */
         .wrapper {
             max-width: 1400px;
             width: 90%;
             margin: 0 auto;
         }
 
-        /* 共用：滑動浮現動畫的初始狀態 */
         .scroll-reveal {
             opacity: 0;
             transform: translateY(60px);
             transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        /* 當 JS 偵測到進入畫面時，加上 active 讓它浮現 */
         .scroll-reveal.active {
             opacity: 1;
             transform: translateY(0);
@@ -40,7 +36,7 @@
            第一區：作品首圖與介紹 (Intro Section)
            ========================================= */
         .intro-section {
-            min-height: 100vh; /* 確保第一屏佔滿畫面 */
+            min-height: 100vh; 
             display: flex;
             align-items: center;
             padding: 80px 0;
@@ -54,7 +50,6 @@
             align-items: flex-start; 
         }
 
-        /* 左側幻燈片 */
         .slideshow-col {
             flex: 1.4; 
             position: relative;
@@ -69,9 +64,11 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
+        /* 💡 修正 1：改為 contain，保留原比例不裁切 */
         .main-img-area img {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; opacity: 0; transition: opacity 0.6s ease; 
+            object-fit: contain; /* <--- 改這裡 */
+            opacity: 0; transition: opacity 0.6s ease; 
         }
 
         .main-img-area img.active { opacity: 1; }
@@ -91,20 +88,24 @@
             display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-top: 20px;
         }
 
+        /* 💡 修正 2：補上 relative 定位 */
         .thumb {
+            position: relative; /* <--- 補上這行 */
             width: 100%; height: 0; padding-bottom: 75%; border-radius: 6px;
             overflow: hidden; background-color: #1a1a1a; cursor: pointer;
             transition: all 0.3s ease; box-sizing: border-box; border: 2px solid transparent;
         }
 
+        /* 💡 修正 3：補上 absolute 讓縮圖顯示，並改為 contain 保留比例 */
         .thumb img {
-            width: 100%; height: 100%; object-fit: cover;
+            position: absolute; top: 0; left: 0; /* <--- 補上這行，縮圖才不會消失 */
+            width: 100%; height: 100%; 
+            object-fit: contain; /* <--- 改這裡，讓縮圖也不裁切 */
             filter: brightness(0.5); transition: filter 0.3s ease;
         }
         .thumb.active { border-color: #555; }
         .thumb.active img, .thumb:hover img { filter: brightness(1); }
 
-        /* 右側文字說明 */
         .content-col {
             flex: 1; 
             position: sticky; top: 80px;
@@ -129,91 +130,41 @@
            ========================================= */
         .team-section {
             padding: 100px 0;
-            border-top: 1px solid #222; /* 加上微弱的黑色分隔線增加精緻感 */
+            border-top: 1px solid #222; 
         }
 
         .section-title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 60px;
-            text-align: center;
+            font-size: 2rem; font-weight: 800; color: #fff;
+            text-transform: uppercase; letter-spacing: 3px;
+            margin-bottom: 60px; text-align: center;
         }
 
         .team-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 劃分成 3 個等寬區塊 */
-            gap: 40px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
         }
 
         .team-member {
-            background: #151515;
-            padding: 40px 30px;
-            border-radius: 16px;
-            text-align: center;
-            transition: transform 0.4s ease;
+            background: #151515; padding: 40px 30px; border-radius: 16px;
+            text-align: center; transition: transform 0.4s ease;
         }
-
-        .team-member:hover {
-            transform: translateY(-10px);
-            background: #1a1a1a;
-        }
-
-        .team-member h3 {
-            font-size: 1.5rem; color: #fff; margin: 0 0 5px 0; letter-spacing: 2px;
-        }
-        .team-member h4 {
-            font-size: 0.9rem; color: #00ffc8; /* 用個跳色來點綴職位 */
-            margin: 0 0 20px 0; font-weight: 400; letter-spacing: 1px;
-        }
-        .team-member p {
-            font-size: 1rem; color: #888; line-height: 1.6; margin: 0;
-        }
+        .team-member:hover { transform: translateY(-10px); background: #1a1a1a; }
+        .team-member h3 { font-size: 1.5rem; color: #fff; margin: 0 0 5px 0; letter-spacing: 2px; }
+        .team-member h4 { font-size: 0.9rem; color: #00ffc8; margin: 0 0 20px 0; font-weight: 400; letter-spacing: 1px; }
+        .team-member p { font-size: 1rem; color: #888; line-height: 1.6; margin: 0; }
 
         /* =========================================
            第三區：幕後製作 (Behind the Scenes)
            ========================================= */
-        .bts-section {
-            padding: 80px 0 150px 0;
-        }
-
-        .bts-block {
-            display: flex;
-            align-items: center;
-            gap: 5vw;
-            margin-bottom: 120px; /* 兩頁之間的超大間距，創造呼吸感 */
-        }
-
-        /* 讓第二頁圖文左右反轉 */
-        .bts-block.reverse {
-            flex-direction: row-reverse;
-        }
-
-        .bts-text {
-            flex: 1;
-        }
-        .bts-text h3 {
-            font-size: 2.2rem; color: #e0e0e0; margin: 0 0 20px 0; letter-spacing: 1px;
-        }
-        .bts-text p {
-            font-size: 1.1rem; line-height: 1.8; color: #999; margin-bottom: 15px;
-        }
-
-        .bts-image {
-            flex: 1.2;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-        .bts-image img {
-            width: 100%; height: auto; display: block;
-            transition: transform 0.8s ease;
-        }
-        .bts-image:hover img {
-            transform: scale(1.05); /* 輕微放大的互動感 */
-        }
+        .bts-section { padding: 80px 0 150px 0; }
+        .bts-block { display: flex; align-items: center; gap: 5vw; margin-bottom: 120px; }
+        .bts-block.reverse { flex-direction: row-reverse; }
+        .bts-text { flex: 1; }
+        .bts-text h3 { font-size: 2.2rem; color: #e0e0e0; margin: 0 0 20px 0; letter-spacing: 1px; }
+        .bts-text p { font-size: 1.1rem; line-height: 1.8; color: #999; margin-bottom: 15px; }
+        
+        .bts-image { flex: 1.2; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .bts-image img { width: 100%; height: auto; display: block; transition: transform 0.8s ease; }
+        .bts-image:hover img { transform: scale(1.05); }
 
         /* =========================================
            頁尾與按鈕
@@ -225,13 +176,9 @@
             padding: 15px 30px; border: 1px solid #333; border-radius: 30px;
             transition: all 0.3s ease; text-align: center;
         }
-        .back-home:hover {
-            color: #111; background-color: #fff; border-color: #fff;
-        }
+        .back-home:hover { color: #111; background-color: #fff; border-color: #fff; }
 
-        @keyframes elegantFadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes elegantFadeInUp { to { opacity: 1; transform: translateY(0); } }
 
         /* =========================================
            RWD 手機版適配
@@ -241,9 +188,7 @@
             .slideshow-col, .content-col { flex: none; width: 100%; }
             .content-col { position: static; margin-top: 50px; }
             .content-col h1 { font-size: 2.5rem; }
-            
-            .team-grid { grid-template-columns: 1fr; /* 手機上分工變成直排 */ }
-            
+            .team-grid { grid-template-columns: 1fr; }
             .bts-block, .bts-block.reverse { flex-direction: column-reverse; gap: 30px; margin-bottom: 80px; }
             .bts-text h3 { font-size: 1.8rem; }
         }
@@ -340,7 +285,7 @@
     <a href="index.html" class="back-home">Back to Home</a>
 
     <script>
-        // 1. 幻燈片控制 (跟之前一樣)
+        // 1. 幻燈片控制
         const mainImages = document.querySelectorAll('.main-img');
         const thumbs = document.querySelectorAll('.thumb');
         const prevBtn = document.getElementById('prevBtn');
@@ -363,21 +308,19 @@
             thumb.addEventListener('click', () => showSlide(index));
         });
 
-        // 2. 滾動浮現動畫控制 (Intersection Observer)
-        // 這個 JS 會監視帶有 .scroll-reveal 的區塊，當它滑進畫面時加上 active
+        // 2. 滾動浮現動畫控制
         const revealElements = document.querySelectorAll('.scroll-reveal');
-        
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // 播過一次後就解除監聽，節省效能
+                    observer.unobserve(entry.target);
                 }
             });
         }, {
             root: null,
             rootMargin: '0px',
-            threshold: 0.15 // 當區塊出現 15% 的時候觸發動畫
+            threshold: 0.15 
         });
 
         revealElements.forEach(el => revealObserver.observe(el));
