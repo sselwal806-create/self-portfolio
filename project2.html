@@ -5,37 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>幽靈之城 - Hsu YU CHIEN Portfolio</title>
     <style>
-        /* 樣式與 project1 完全共用，保持網站風格高度一致 */
+        /* 基礎設定 */
         body { margin: 0; background-color: #0f0f0f; color: #d0d0d0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
         .wrapper { max-width: 1400px; width: 90%; margin: 0 auto; }
+        
+        /* 滾動浮現動畫 */
         .scroll-reveal { opacity: 0; transform: translateY(60px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .scroll-reveal.active { opacity: 1; transform: translateY(0); }
+        
+        /* 第一區：Intro */
         .intro-section { min-height: 100vh; display: flex; align-items: center; padding: 80px 0; box-sizing: border-box; }
         .intro-container { display: flex; gap: 6vw; width: 100%; align-items: flex-start; }
         .slideshow-col { flex: 1.4; position: relative; opacity: 0; transform: translateY(60px); animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+        
+        /* 主圖片區 */
         .main-img-area { position: relative; width: 100%; height: 0; padding-bottom: 75%; background-color: #1a1a1a; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .main-img-area img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s ease; }
+        .main-img-area img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: contain; /* 保留原比例 */
+            opacity: 0; transition: opacity 0.6s ease; 
+        }
         .main-img-area img.active { opacity: 1; }
+        
+        /* 箭頭 */
         .arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.1); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; z-index: 10; transition: background 0.3s ease; backdrop-filter: blur(5px); }
         .arrow:hover { background: rgba(255, 255, 255, 0.2); }
         .arrow-left { left: 20px; } .arrow-right { right: 20px; }
+        
+        /* 縮圖區 */
         .thumbs-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-top: 20px; }
-        .thumb { width: 100%; height: 0; padding-bottom: 75%; border-radius: 6px; overflow: hidden; background-color: #1a1a1a; cursor: pointer; transition: all 0.3s ease; box-sizing: border-box; border: 2px solid transparent; }
-        .thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); transition: filter 0.3s ease; }
+        .thumb { 
+            position: relative; width: 100%; height: 0; padding-bottom: 75%; 
+            border-radius: 6px; overflow: hidden; background-color: #1a1a1a; cursor: pointer; 
+            transition: all 0.3s ease; box-sizing: border-box; border: 2px solid transparent; 
+        }
+        .thumb img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: contain; /* 保留原比例 */
+            filter: brightness(0.5); transition: filter 0.3s ease; 
+        }
         .thumb.active { border-color: #555; } .thumb.active img, .thumb:hover img { filter: brightness(1); }
+        
+        /* 說明文字 */
         .content-col { flex: 1; position: sticky; top: 80px; opacity: 0; transform: translateY(60px); animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
         .content-col h1 { font-size: 3.5rem; font-weight: 800; color: #b0b0b0; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
         .content-col h2 { font-size: 1rem; font-weight: 400; color: #666; margin: 5px 0 5px 0; letter-spacing: 5px; text-transform: uppercase; }
         .content-col h3 { font-size: 1rem; font-weight: 400; color: #888; margin: 0 0 40px 0; letter-spacing: 2px; }
         .description p { font-size: 1.1rem; line-height: 1.8; color: #a1a1a1; margin-bottom: 25px; }
-        .team-section { padding: 100px 0; border-top: 1px solid #222; }
-        .section-title { font-size: 2rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 60px; text-align: center; }
-        .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-        .team-member { background: #151515; padding: 40px 30px; border-radius: 16px; text-align: center; transition: transform 0.4s ease; }
-        .team-member:hover { transform: translateY(-10px); background: #1a1a1a; }
-        .team-member h3 { font-size: 1.5rem; color: #fff; margin: 0 0 5px 0; letter-spacing: 2px; }
-        .team-member h4 { font-size: 0.9rem; color: #00ffc8; margin: 0 0 20px 0; font-weight: 400; letter-spacing: 1px; }
-        .team-member p { font-size: 1rem; color: #888; line-height: 1.6; margin: 0; }
+        
+        /* 幕後紀實 */
         .bts-section { padding: 80px 0 150px 0; }
         .bts-block { display: flex; align-items: center; gap: 5vw; margin-bottom: 120px; }
         .bts-block.reverse { flex-direction: row-reverse; }
@@ -45,10 +63,34 @@
         .bts-image { flex: 1.2; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .bts-image img { width: 100%; height: auto; display: block; transition: transform 0.8s ease; }
         .bts-image:hover img { transform: scale(1.05); }
+
+        /* =========================================
+           YouTube 影片響應式容器
+           ========================================= */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 創造 16:9 的完美比例 */
+            height: 0;
+            background-color: #1a1a1a;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* 返回按鈕 */
         .back-home { display: block; width: max-content; margin: 0 auto 80px auto; text-decoration: none; color: #888; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; padding: 15px 30px; border: 1px solid #333; border-radius: 30px; transition: all 0.3s ease; text-align: center; }
         .back-home:hover { color: #111; background-color: #fff; border-color: #fff; }
+        
         @keyframes elegantFadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 900px) { .intro-container { flex-direction: column; } .slideshow-col, .content-col { flex: none; width: 100%; } .content-col { position: static; margin-top: 50px; } .content-col h1 { font-size: 2.5rem; } .team-grid { grid-template-columns: 1fr; } .bts-block, .bts-block.reverse { flex-direction: column-reverse; gap: 30px; margin-bottom: 80px; } .bts-text h3 { font-size: 1.8rem; } }
+        
+        /* RWD */
+        @media (max-width: 900px) { .intro-container { flex-direction: column; } .slideshow-col, .content-col { flex: none; width: 100%; } .content-col { position: static; margin-top: 50px; } .content-col h1 { font-size: 2.5rem; } .bts-block, .bts-block.reverse { flex-direction: column-reverse; gap: 30px; margin-bottom: 80px; } .bts-text h3 { font-size: 1.8rem; } }
     </style>
 </head>
 <body>
@@ -81,7 +123,7 @@
                 <h2>© 2024 / Digital Art & Animation</h2>
                 <h3>許妤謙</h3>
                 <div class="description">
-                    <p>「幽靈之城」，其實是對網路世界的比喻，每個人看起來無法識別，無意義、無交集。 </p>
+                    <p>「幽靈之城」，其實是對網路世界的比喻，每個人看起來無法識別，無意義、無交集。</p>
                     <p>透過數位建模與影像合成，呈現在迴路之間由一層一層平面組成的立體世界。</p>
                     <p>觀者將在長鏡頭中穿梭，感受那種令人窒息卻又無法移開目光的荒涼美學。</p>
                 </div>
@@ -101,6 +143,7 @@
                     <img src="https://picsum.photos/1000/600?random=31" alt="3D 建模過程">
                 </div>
             </div>
+            
             <div class="bts-block reverse scroll-reveal">
                 <div class="bts-text">
                     <h3>寂靜之中的聽覺張力</h3>
@@ -108,7 +151,9 @@
                     <p>藉由採樣遠處的風聲、鋼筋共振的低鳴，以及刻意製造的空間殘響，為畫面注入了一種「雖然沒有人，卻感覺有什麼存在」的神祕張力。</p>
                 </div>
                 <div class="bts-image">
-                    <img src="https://picsum.photos/1000/600?random=32" alt="配樂與音效設計">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/fudzZRwvDbg?si=i9ok9SK1NoAC5Dnn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
         </div>
