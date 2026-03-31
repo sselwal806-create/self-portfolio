@@ -5,50 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your face in Mosaic - Hsu YU CHIEN Portfolio</title>
     <style>
-        /* 樣式與 project1 完全共用，保持網站風格高度一致 */
+        /* =========================================
+           基礎設定 & 字體
+           ========================================= */
         body { margin: 0; background-color: #0f0f0f; color: #d0d0d0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
         .wrapper { max-width: 1400px; width: 90%; margin: 0 auto; }
         .scroll-reveal { opacity: 0; transform: translateY(60px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
         .scroll-reveal.active { opacity: 1; transform: translateY(0); }
+        
         .intro-section { min-height: 100vh; display: flex; align-items: center; padding: 80px 0; box-sizing: border-box; }
         .intro-container { display: flex; gap: 6vw; width: 100%; align-items: flex-start; }
         .slideshow-col { flex: 1.4; position: relative; opacity: 0; transform: translateY(60px); animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+        
         .main-img-area { position: relative; width: 100%; height: 0; padding-bottom: 75%; background-color: #1a1a1a; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .main-img-area img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s ease; }
+        
+        .main-img-area img { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: contain; 
+            opacity: 0; transition: opacity 0.6s ease; 
+        }
         .main-img-area img.active { opacity: 1; }
+        
         .arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.1); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.5rem; z-index: 10; transition: background 0.3s ease; backdrop-filter: blur(5px); }
         .arrow:hover { background: rgba(255, 255, 255, 0.2); }
         .arrow-left { left: 20px; } .arrow-right { right: 20px; }
         .thumbs-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; margin-top: 20px; }
-        .thumb { width: 100%; height: 0; padding-bottom: 75%; border-radius: 6px; overflow: hidden; background-color: #1a1a1a; cursor: pointer; transition: all 0.3s ease; box-sizing: border-box; border: 2px solid transparent; }
-        .thumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); transition: filter 0.3s ease; }
+        
+        .thumb { 
+            position: relative;
+            width: 100%; height: 0; padding-bottom: 75%; border-radius: 6px; overflow: hidden; background-color: #1a1a1a; cursor: pointer; transition: all 0.3s ease; box-sizing: border-box; border: 2px solid transparent; 
+        }
+        .thumb img { 
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: contain; 
+            filter: brightness(0.5); transition: filter 0.3s ease; 
+        }
         .thumb.active { border-color: #555; } .thumb.active img, .thumb:hover img { filter: brightness(1); }
+        
         .content-col { flex: 1; position: sticky; top: 80px; opacity: 0; transform: translateY(60px); animation: elegantFadeInUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; }
         .content-col h1 { font-size: 3.5rem; font-weight: 800; color: #b0b0b0; margin: 0; letter-spacing: 2px; text-transform: uppercase; }
         .content-col h2 { font-size: 1rem; font-weight: 400; color: #666; margin: 5px 0 5px 0; letter-spacing: 5px; text-transform: uppercase; }
         .content-col h3 { font-size: 1rem; font-weight: 400; color: #888; margin: 0 0 40px 0; letter-spacing: 2px; }
         .description p { font-size: 1.1rem; line-height: 1.8; color: #a1a1a1; margin-bottom: 25px; }
-        .team-section { padding: 100px 0; border-top: 1px solid #222; }
-        .section-title { font-size: 2rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 60px; text-align: center; }
-        .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-        .team-member { background: #151515; padding: 40px 30px; border-radius: 16px; text-align: center; transition: transform 0.4s ease; }
-        .team-member:hover { transform: translateY(-10px); background: #1a1a1a; }
-        .team-member h3 { font-size: 1.5rem; color: #fff; margin: 0 0 5px 0; letter-spacing: 2px; }
-        .team-member h4 { font-size: 0.9rem; color: #00ffc8; margin: 0 0 20px 0; font-weight: 400; letter-spacing: 1px; }
-        .team-member p { font-size: 1rem; color: #888; line-height: 1.6; margin: 0; }
+        
         .bts-section { padding: 80px 0 150px 0; }
         .bts-block { display: flex; align-items: center; gap: 5vw; margin-bottom: 120px; }
         .bts-block.reverse { flex-direction: row-reverse; }
         .bts-text { flex: 1; }
         .bts-text h3 { font-size: 2.2rem; color: #e0e0e0; margin: 0 0 20px 0; letter-spacing: 1px; }
         .bts-text p { font-size: 1.1rem; line-height: 1.8; color: #999; margin-bottom: 15px; }
+        
         .bts-image { flex: 1.2; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .bts-image img { width: 100%; height: auto; display: block; transition: transform 0.8s ease; }
         .bts-image:hover img { transform: scale(1.05); }
+
+        /* =========================================
+           新增/修改：YouTube 影片響應式容器
+           ========================================= */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 創造 16:9 的完美比例 */
+            height: 0;
+            background-color: #1a1a1a;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* =========================================
+           新增：專門用於縮小獎狀圖片的樣式
+           ========================================= */
+        .shrink-certificate {
+            flex: 0.6; /* 縮小容器佔用的比例 (原本是 1.2) */
+            display: flex;
+            justify-content: flex-end; /* 讓圖片在容器內靠右 */
+            align-items: center;
+            background: transparent; /* 移除容器背景色，讓視覺更乾淨 */
+            box-shadow: none; /* 移除大容器的陰影 */
+        }
+
+        .shrink-certificate img {
+            width: auto; /* 寬度依比例放大 */
+            max-width: 100%; /* 限制最大寬度不超過容器 */
+            height: auto;
+            max-height: 400px; /* 設置一個最大高度限制 */
+            border-radius: 8px; /* 給圖片本身一點圓角 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* 將陰影加在圖片本身 */
+        }
+        
         .back-home { display: block; width: max-content; margin: 0 auto 80px auto; text-decoration: none; color: #888; font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; padding: 15px 30px; border: 1px solid #333; border-radius: 30px; transition: all 0.3s ease; text-align: center; }
         .back-home:hover { color: #111; background-color: #fff; border-color: #fff; }
         @keyframes elegantFadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 900px) { .intro-container { flex-direction: column; } .slideshow-col, .content-col { flex: none; width: 100%; } .content-col { position: static; margin-top: 50px; } .content-col h1 { font-size: 2.5rem; } .team-grid { grid-template-columns: 1fr; } .bts-block, .bts-block.reverse { flex-direction: column-reverse; gap: 30px; margin-bottom: 80px; } .bts-text h3 { font-size: 1.8rem; } }
+        
+        /* RWD 手機版適配修訂 */
+        @media (max-width: 900px) { 
+            .intro-container { flex-direction: column; } 
+            .slideshow-col, .content-col { flex: none; width: 100%; } 
+            .content-col { position: static; margin-top: 50px; } 
+            .content-col h1 { font-size: 2.5rem; } 
+            .bts-block, .bts-block.reverse { flex-direction: column-reverse; gap: 30px; margin-bottom: 80px; } 
+            .bts-text h3 { font-size: 1.8rem; }
+            
+            /* 手機版時恢復較大的圖片顯示 */
+            .shrink-certificate {
+                flex: none;
+                width: 100%;
+                justify-content: center; /* 手機版居中 */
+                margin-top: 20px;
+            }
+            .shrink-certificate img {
+                max-height: 300px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -59,12 +133,12 @@
                 <div class="main-img-area">
                     <button class="arrow arrow-left" id="prevBtn">&#10094;</button>
                     <button class="arrow arrow-right" id="nextBtn">&#10095;</button>
-                    <img src="https://picsum.photos/1200/900?random=21" alt="幽靈之城 01" class="main-img active">
-                    <img src="https://picsum.photos/1200/900?random=22" alt="幽靈之城 02" class="main-img">
-                    <img src="https://picsum.photos/1200/900?random=23" alt="幽靈之城 03" class="main-img">
-                    <img src="https://picsum.photos/1200/900?random=24" alt="幽靈之城 04" class="main-img">
-                    <img src="https://picsum.photos/1200/900?random=25" alt="幽靈之城 05" class="main-img">
-                    <img src="https://picsum.photos/1200/900?random=26" alt="幽靈之城 06" class="main-img">
+                    <img src="https://picsum.photos/1200/900?random=21" alt="作品圖 01" class="main-img active">
+                    <img src="https://picsum.photos/1200/900?random=22" alt="作品圖 02" class="main-img">
+                    <img src="https://picsum.photos/1200/900?random=23" alt="作品圖 03" class="main-img">
+                    <img src="https://picsum.photos/1200/900?random=24" alt="作品圖 04" class="main-img">
+                    <img src="https://picsum.photos/1200/900?random=25" alt="作品圖 05" class="main-img">
+                    <img src="https://picsum.photos/1200/900?random=26" alt="作品圖 06" class="main-img">
                 </div>
                 <div class="thumbs-grid">
                     <div class="thumb active"><img src="https://picsum.photos/400/300?random=21" alt="Thumb 01"></div>
@@ -91,21 +165,23 @@
         <div class="wrapper">
             <div class="bts-block scroll-reveal">
                 <div class="bts-text">
-                    <h3>廢墟的數位重建</h3>
+                    <h3>雙頻道動畫對映</h3>
                     <p>以雙頻道動畫呈現，人像與鏡像對映。</p>
                 </div>
                 <div class="bts-image">
-                    <img src="https://picsum.photos/1000/600?random=31" alt="3D 建模過程">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=abcdefg" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
+            
             <div class="bts-block reverse scroll-reveal">
                 <div class="bts-text">
                     <h3>獲獎紀錄</h3>
-                    <p></p>
                     <p>曾獲「第21屆技專校院電腦動畫競賽」一般大學組佳作</p>
                 </div>
-                <div class="bts-image">
-                    <img src="獎狀.jpg" alt="配樂與音效設計">
+                <div class="bts-image shrink-certificate">
+                    <img src="獎狀.jpg" alt="獲獎獎狀">
                 </div>
             </div>
         </div>
