@@ -21,16 +21,14 @@
         #intro-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100vh;
-            background-color: #050505; /* 極致黑背景 */
+            background-color: #050505; 
             z-index: 9999; 
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 修改：布幕上滑動畫時間縮短為 0.8s，變得更輕快 */
             transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
-        /* 當加上 slide-up 類別時 */
         #intro-screen.slide-up {
             transform: translateY(-100%);
         }
@@ -40,29 +38,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 初始隱藏，等待 JS 顯示 */
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        /* --- 核心修改：文字與顏色相反的矩形結合 --- */
         .typing-box {
             display: inline-block;
-            /* 顏色相反：白色背景，黑色文字 */
             background-color: #fff;
             color: #000;
-            font-family: monospace; /* 打字機專用等寬字 */
+            font-family: monospace; 
             font-size: 1.8rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             white-space: nowrap;
-            /* 矩形的邊距與圓角 */
             padding: 15px 30px;
-            border-radius: 8px; /* 輕微圓角增加精緻感 */
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1); /* 微微發光效果 */
+            border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1); 
         }
 
-        /* 打字機游標 (顏色也相反為黑色) */
         .typing-box::after {
             content: '|';
             color: #000;
@@ -73,7 +66,7 @@
         @keyframes blink { 50% { opacity: 0; } }
 
         /* =========================================
-           主頁面：標題與轉盤 (維持原樣)
+           主頁面：標題與轉盤 
            ========================================= */
         .hero {
             text-align: center;
@@ -94,7 +87,6 @@
             opacity: 0; transform: translateY(20px);
         }
 
-        /* 告訴主畫面：可以開始播放你的標題進場動畫了！ */
         body.start-anim .hero h1 {
             animation: textFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
         }
@@ -176,12 +168,10 @@
         .menu-overlay.active .menu-links li:nth-child(1) a { transform: translateY(0); transition-delay: 0.1s; }
         .menu-overlay.active .menu-links li:nth-child(2) a { transform: translateY(0); transition-delay: 0.2s; }
         .menu-overlay.active .menu-links li:nth-child(3) a { transform: translateY(0); transition-delay: 0.3s; }
-        .menu-overlay.active .menu-links li:nth-child(4) a { transform: translateY(0); transition-delay: 0.4s; }
         .menu-links a:hover { color: #fff; }
 
-        /* 手機版適配 */
         @media (max-width: 768px) {
-            .typing-box { font-size: 1.2rem; padding: 10px 20px; } /* 手機上縮小方塊 */
+            .typing-box { font-size: 1.2rem; padding: 10px 20px; } 
             .hero h1 { font-size: 2.8rem; }
             .hero h2 { font-size: 0.9rem; }
             .card { width: 300px; height: 300px; } 
@@ -205,9 +195,8 @@
     <div class="menu-overlay" id="menuOverlay">
         <ul class="menu-links">
             <li><a href="index.html">Home</a></li>
-            <li><a href="works.html">Works</a></li> 
             <li><a href="about.html">About</a></li>   
-            <li><a href="mailto:your-email@example.com">Contact</a></li>
+            <li><a href="mailto:sselwal@gmail.com">Contact</a></li>
         </ul>
     </div>
 
@@ -240,19 +229,11 @@
         <a href="project5.html" class="card">
             <h3 class="card-number">#5</h3>
             <h4 class="card-name">插畫集</h4>
-            <img src="Illustration01.PNG" alt="保留作品 5">
+            <img src="Illustration01.PNG" alt="插畫集">
         </a>
-        <a href="project6.html" class="card">
-            <h3 class="card-number">#6</h3>
-            <h4 class="card-name">即將公開 (TBA)</h4>
-            <img src="https://picsum.photos/600/600?random=6" alt="保留作品 6">
-        </a>
-    </div>
+        </div>
 
     <script>
-        // =========================================
-        // 核心修改：大幅縮短時間的打字機邏輯
-        // =========================================
         window.addEventListener('load', () => {
             const typingContainer = document.getElementById('typing-container');
             const typingText = document.getElementById('typing-text');
@@ -260,24 +241,19 @@
             const textString = "Hi！here's my portfolio：）";
             let i = 0;
 
-            // 步驟 1：網頁載入後，立刻浮現打字機選框 (延遲縮短為 100ms)
             setTimeout(() => {
                 typingContainer.style.opacity = '1';
             }, 100);
 
-            // 步驟 2：緊接著啟動打字機動畫 (延遲縮短為 300ms)
             setTimeout(() => {
                 function typeWriter() {
                     if (i < textString.length) {
                         typingText.innerHTML = textString.substring(0, i + 1);
                         i++;
-                        // 修改：打字速度變快為 50ms (原本是 80ms)
                         setTimeout(typeWriter, 30); 
                     } else {
-                        // 步驟 3：打完字後，只停頓 0.5 秒 (原本是 1.2s)，然後布幕上滑
                         setTimeout(() => {
                             introScreen.classList.add('slide-up');
-                            // 通知主畫面播放動畫
                             document.body.classList.add('start-anim');
                         }, 300);
                     }
@@ -286,8 +262,6 @@
             }, 300);
         });
 
-
-        // --- 原有的控制 (維持原樣) ---
         const menuToggle = document.getElementById('menuToggle');
         const menuOverlay = document.getElementById('menuOverlay');
 
@@ -307,10 +281,13 @@
                 if (diff > Math.floor(totalCards / 2)) diff -= totalCards;
                 else if (diff < -Math.floor(totalCards / 2)) diff += totalCards;
 
-                let translateX = diff * 240; 
+                // 調整：拉寬 X 軸間距，確保放大時不會重疊
+                let translateX = diff * 280; 
                 let translateY = Math.abs(diff) * 40; 
                 let rotateZ = diff * 8; 
-                let scale = 1 - Math.abs(diff) * 0.15; 
+                
+                // 調整：選中的項目放大 (1.2倍)，兩側逐漸縮小
+                let scale = diff === 0 ? 1.2 : 0.9 - Math.abs(diff) * 0.15; 
 
                 card.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${rotateZ}deg) scale(${scale})`;
                 card.style.zIndex = 100 - Math.abs(diff);
